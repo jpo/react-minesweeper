@@ -11,7 +11,6 @@ require('styles//Minesweeper.css');
 export default class Minesweeper extends React.Component {
   constructor(props) {
     super(props);
-    this.state = this.getGameSettings(1);
   }
 
   resetGame() {
@@ -20,23 +19,18 @@ export default class Minesweeper extends React.Component {
 
   // 1 = beginner, 2 = intermediate, 3 = expert
   newGame(difficulty) {
-    var settings = this.getGameSettings(difficulty);
-    this.setState(settings);
-  }
-
-  getGameSettings(difficulty) {
     var config = (difficulty === 1) ? {rows:  9, cols:  9, mines: 10} :
                  (difficulty === 2) ? {rows: 16, cols: 16, mines: 40} :
                  (difficulty === 3) ? {rows: 16, cols: 30, mines: 99} : {};
 
-    return {
+    this.setState({
       status: 'init',
       cells: MinesweeperModel.newGame(config.rows, config.cols, config.mines),
       difficulty: difficulty,
       rows: config.rows,
       cols: config.cols,
       mines: config.mines
-    }
+    });
   }
 
   isNewGame() {
@@ -98,6 +92,10 @@ export default class Minesweeper extends React.Component {
       case 'gameover': return 'off';
       default:         return 'off';
     }
+  }
+
+  componentWillMount() {
+    this.newGame(1);
   }
 
   render() {
