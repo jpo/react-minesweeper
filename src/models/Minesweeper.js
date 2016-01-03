@@ -70,13 +70,13 @@ export default class Minesweeper {
     return cells;
   }
 
-  static revealCell(cells, x, y) {
+  static openCell(cells, x, y) {
     cells[x][y].isOpen    = true;
     cells[x][y].isFlagged = false;
     return cells;
   }
 
-  static revealSiblings(cells, x, y) {
+  static openSiblings(cells, x, y) {
     if (cells[x]    === undefined) return cells;
     if (cells[x][y] === undefined) return cells;
     if (cells[x][y].isOpen)        return cells;
@@ -87,7 +87,7 @@ export default class Minesweeper {
     if (cells[x][y].isEmpty) {
       for (var xx = (x - 1); xx <= (x + 1); xx++) {
         for (var yy = (y - 1); yy <= (y + 1); yy++) {
-          cells = this.revealSiblings(cells, xx, yy);
+          cells = this.openSiblings(cells, xx, yy);
         }
       }
     }
@@ -95,7 +95,7 @@ export default class Minesweeper {
     return cells;
   }
 
-  static revealMines(cells) {
+  static openMines(cells) {
     return cells.map((row) => {
       return row.map((cell) => {
         if (cell.isMine)
