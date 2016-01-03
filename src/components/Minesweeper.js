@@ -5,7 +5,6 @@ import GameStatus from './GameStatus'
 import Minefield from './Minefield'
 import Difficulty from './Difficulty'
 import MinesweeperModel from '../models/Minesweeper'
-import MinesweeperStore from '../stores/MinesweeperStore'
 
 require('styles//Minesweeper.css');
 
@@ -56,26 +55,6 @@ export default class Minesweeper extends React.Component {
     }
   }
 
-  /*
-  createMinefield(rows, cols, mines) {
-    var minefield = MinesweeperStore.generateMinefield(rows, cols, mines);
-
-    return minefield.map((row, rowIndex) => {
-      return row.map((col, colIndex) => {
-        return {
-          x: rowIndex,
-          y: colIndex,
-          value: col,
-          isOpen: false,
-          isFlagged: false,
-          isEmpty: (col === ' '),
-          isMine: (col === '*')
-        };
-      });
-    });
-  }
-  */
-
   isNewGame() {
     return this.state.status && this.state.status === 'init';
   }
@@ -125,9 +104,7 @@ export default class Minesweeper extends React.Component {
     if (!this.isClockRunning())
       this.startClock();
 
-    var cells = this.state.cells;
-    cells[x][y].isFlagged = !cells[x][y].isFlagged;
-    this.setState({ cells: cells });
+    this.setState({ cells: MinesweeperModel.flagCell(this.state.cells, x, y) });
   }
 
   openCell(x, y) {
@@ -144,61 +121,19 @@ export default class Minesweeper extends React.Component {
       return;
 
     if (cell.isMine) {
-      this.setState({ cells: this.revealMines(cells) });
+      this.setState({ cells: MinesweeperModel.revealMines(cells) });
       this.stopClock();
     }
     else if (cell.isEmpty) {
-      this.setState({ cells: this.revealSiblings(cells, x, y) });
+      this.setState({ cells: MinesweeperModel.revealSiblings(cells, x, y) });
     }
     else {
-      this.setState({ cells: this.revealCell(cells, x, y) });
+      this.setState({ cells: MinesweeperModel.revealCell(cells, x, y) });
     }
   }
 
-  revealCell(cells, x, y) {
-    cells[x][y].isOpen    = true;
-    cells[x][y].isFlagged = false;
-    return cells;
-  }
-
-  revealSiblings(cells, x, y) {
-    if (cells[x]    === undefined) return cells;
-    if (cells[x][y] === undefined) return cells;
-    if (cells[x][y].isOpen)        return cells;
-
-    cells[x][y].isOpen    = true;
-    cells[x][y].isFlagged = false;
-
-    if (cells[x][y].isEmpty) {
-      cells = this.revealSiblings(cells, x - 1, y - 1);
-      cells = this.revealSiblings(cells, x - 1, y);
-      cells = this.revealSiblings(cells, x - 1, y + 1);
-      cells = this.revealSiblings(cells, x + 1, y);
-      cells = this.revealSiblings(cells, x, y - 1);
-      cells = this.revealSiblings(cells, x, y + 1);
-      cells = this.revealSiblings(cells, x + 1, y - 1);
-      cells = this.revealSiblings(cells, x + 1, y + 1);
-    }
-
-    return cells;
-  }
-
-  revealMines(cells) {
-    return cells.map((row) => {
-      return row.map((cell) => {
-        if (cell.isMine)
-          cell.isOpen = true;
-        return cell;
-      })
-    });
-  }
-
-  countFlags() {
-    return this.state.cells.reduce((memo1, row) => {
-      return memo1 + row.reduce((memo2, cell) => {
-        return memo2 + (cell.isFlagged ? 1 : 0);
-      }, 0);
-    }, 0);
+  minesRemaining() {
+    return this.state.mines - MinesweeperModel.countFlags(this.state.cells);
   }
 
   render() {
@@ -206,7 +141,7 @@ export default class Minesweeper extends React.Component {
       <div className="minesweeper">
         <GameStatus time={this.state.time}
                     status={this.state.status}
-                    mines={this.state.mines - this.countFlags()}
+                    mines={this.minesRemaining()}
                     resetGame={this.resetGame.bind(this)} />
 
         <Minefield cells={this.state.cells}

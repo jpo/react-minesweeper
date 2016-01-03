@@ -64,4 +64,55 @@ export default class Minesweeper {
       });
     });
   }
+
+  static flagCell(cells, x, y) {
+    cells[x][y].isFlagged = !cells[x][y].isFlagged;
+    return cells;
+  }
+
+  static revealCell(cells, x, y) {
+    cells[x][y].isOpen    = true;
+    cells[x][y].isFlagged = false;
+    return cells;
+  }
+
+  static revealSiblings(cells, x, y) {
+    if (cells[x]    === undefined) return cells;
+    if (cells[x][y] === undefined) return cells;
+    if (cells[x][y].isOpen)        return cells;
+
+    cells[x][y].isOpen    = true;
+    cells[x][y].isFlagged = false;
+
+    if (cells[x][y].isEmpty) {
+      cells = this.revealSiblings(cells, x - 1, y - 1);
+      cells = this.revealSiblings(cells, x - 1, y);
+      cells = this.revealSiblings(cells, x - 1, y + 1);
+      cells = this.revealSiblings(cells, x + 1, y);
+      cells = this.revealSiblings(cells, x, y - 1);
+      cells = this.revealSiblings(cells, x, y + 1);
+      cells = this.revealSiblings(cells, x + 1, y - 1);
+      cells = this.revealSiblings(cells, x + 1, y + 1);
+    }
+
+    return cells;
+  }
+
+  static revealMines(cells) {
+    return cells.map((row) => {
+      return row.map((cell) => {
+        if (cell.isMine)
+          cell.isOpen = true;
+        return cell;
+      })
+    });
+  }
+
+  static countFlags(cells) {
+    return cells.reduce((memo1, row) => {
+      return memo1 + row.reduce((memo2, cell) => {
+        return memo2 + (cell.isFlagged ? 1 : 0);
+      }, 0);
+    }, 0);
+  }
 }
