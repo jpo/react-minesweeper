@@ -1,0 +1,22 @@
+.game-status {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.game-status > .time {
+  flex: 1 30%;
+  line-height: 60px;
+  text-align: left;
+}
+
+.game-status > .smiley {
+  flex: 2 40%;
+  font-size: 40px;
+  text-align: center;
+}
+
+.game-status > .mines {
+  flex: 3 30%;
+  line-height: 60px;
+  text-align: right;
+}

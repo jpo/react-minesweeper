@@ -1,0 +1,14 @@
+.difficulty {
+  text-align: center;
+}
+
+.difficulty > button {
+  border: 0;
+  background-color: #CCC9D1;
+  padding: 5px 10px;
+  margin: 5px;
+}
+
+.difficulty > button.active {
+  background-color: #E2E1E9;
+}
