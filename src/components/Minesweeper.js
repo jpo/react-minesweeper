@@ -29,7 +29,8 @@ export default class Minesweeper extends React.Component {
       difficulty: difficulty,
       rows: config.rows,
       cols: config.cols,
-      mines: config.mines
+      mines: config.mines,
+      flagged: 0
     });
   }
 
@@ -42,8 +43,9 @@ export default class Minesweeper extends React.Component {
       return;
 
     this.setState({
-      cells:  MinesweeperModel.flagCell(this.state.cells, x, y),
-      status: 'playing'
+      cells:   MinesweeperModel.flagCell(this.state.cells, x, y),
+      flagged: MinesweeperModel.countFlags(this.state.cells),
+      status:  'playing'
     });
   }
 
@@ -78,7 +80,7 @@ export default class Minesweeper extends React.Component {
   }
 
   minesRemaining() {
-    return this.state.mines - MinesweeperModel.countFlags(this.state.cells);
+    return this.state.mines - this.state.flagged;
   }
 
   clockMode(status) {
