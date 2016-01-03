@@ -7,7 +7,7 @@ export default class Cell extends React.Component {
     super(props);
   }
 
-  getStatus() {
+  getClassName() {
     if (this.props.isOpen && this.props.isMine)
       return 'mine';
     else if (this.props.isOpen)
@@ -21,7 +21,7 @@ export default class Cell extends React.Component {
       return <i className="fa fa-flag" />;
     else if (this.props.isOpen && this.props.isMine)
       return <i className="fa fa-bomb" />;
-    else if (this.props.isOpen)
+    else if (this.props.isOpen && this.props.value > 0)
       return this.props.value;
     else
       return '';
@@ -37,14 +37,11 @@ export default class Cell extends React.Component {
   }
 
   render() {
-    var cellClass = this.getStatus();
-    var value = this.getValue();
-
     return (
-      <td className={cellClass}
+      <td className={this.getClassName()}
           onClick={this.handleClick.bind(this)}
           onContextMenu={this.handleContextMenu.bind(this)}>
-        {value}
+        {this.getValue()}
       </td>
     );
   }
