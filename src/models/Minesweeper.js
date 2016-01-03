@@ -85,14 +85,11 @@ export default class Minesweeper {
     cells[x][y].isFlagged = false;
 
     if (cells[x][y].isEmpty) {
-      cells = this.revealSiblings(cells, x - 1, y - 1);
-      cells = this.revealSiblings(cells, x - 1, y);
-      cells = this.revealSiblings(cells, x - 1, y + 1);
-      cells = this.revealSiblings(cells, x + 1, y);
-      cells = this.revealSiblings(cells, x, y - 1);
-      cells = this.revealSiblings(cells, x, y + 1);
-      cells = this.revealSiblings(cells, x + 1, y - 1);
-      cells = this.revealSiblings(cells, x + 1, y + 1);
+      for (var xx = (x - 1); xx <= (x + 1); xx++) {
+        for (var yy = (y - 1); yy <= (y + 1); yy++) {
+          cells = this.revealSiblings(cells, xx, yy);
+        }
+      }
     }
 
     return cells;
