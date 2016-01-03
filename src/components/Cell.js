@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-export default class MinefieldCell extends React.Component {
+export default class Cell extends React.Component {
   constructor(props) {
     super(props);
   }

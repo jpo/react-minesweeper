@@ -1,7 +1,7 @@
 'use strict';
 
 import React from 'react';
-import MinefieldCell from './MinefieldCell'
+import Cell from './Cell'
 
 require('styles//Minefield.css');
 
@@ -16,16 +16,15 @@ export default class Minefield extends React.Component {
         <tr key={'row-' + rowIndex}>
           {row.map((cell, cellIndex) => {
             return (
-              <MinefieldCell key={'col-' + cellIndex}
-                             x={cell.x}
-                             y={cell.y}
-                             isFlagged={cell.isFlagged}
-                             isOpen={cell.isOpen}
-                             isMine={cell.isMine}
-                             value={cell.value}
-                             openCell={this.props.openCell.bind(this)}
-                             flagCell={this.props.flagCell.bind(this)}
-              />
+              <Cell key={'col-' + cellIndex}
+                    x={cell.x}
+                    y={cell.y}
+                    isFlagged={cell.isFlagged}
+                    isOpen={cell.isOpen}
+                    isMine={cell.isMine}
+                    value={cell.value}
+                    openCell={this.props.openCell.bind(this)}
+                    flagCell={this.props.flagCell.bind(this)} />
             )
           })}
         </tr>
