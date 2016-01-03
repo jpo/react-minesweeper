@@ -7,52 +7,49 @@ export default class Clock extends React.Component {
     super(props);
     this.state = {
       clockId: 0,
-      time: 0;
+      time: 0
     }
   }
 
-  isNewGame() {
-    return this.props.status === 'init';
-  }
-
-  isPlaying() {
-    return this.props.status === 'playing';
-  }
-
-  isGameOver() {
-    return this.props.status === 'gameover';
-  }
-
-  isClockRunning() {
-    return this.state.clockId > 0;
-  }
-
-  shouldRunClock() {
-    if (this.isPlaying())
-  }
-
   startClock() {
-    var clockId = setInterval(this.clockTick, 1000);
+    var clockId = setInterval(this.clockTick.bind(this), 1000);
     this.setState({ clockId: clockId });
   }
 
   stopClock() {
     clearInterval(this.state.clockId);
-    this.setState({ clockId: 0 });
+    this.setState({ clockId: null });
+  }
+
+  resetClock() {
+    clearInterval(this.state.clockId);
+    this.setState({ time: 0, clockId: null });
   }
 
   clockTick() {
     this.setState({ time: ++this.state.time });
   }
 
-  componentDidMount() {
-    if (isNewGame() && !this.isClockRunning())
-      this.startClock();
-    else if (this.isGameOver())
-      this.stopClock();
+  componentWillReceiveProps(nextProps) {
+    if (this.props.mode === nextProps.mode)
+      return;
+
+    switch (nextProps.mode) {
+      case 'reset':
+        this.resetClock();
+        break;
+      case 'off':
+        this.stopClock();
+        break;
+      case 'on':
+        this.startClock();
+        break;
+    }
   }
 
   render() {
-    <div className="time">Time: {this.state.time}</div>
+    return (
+      <div className="time">Time: {this.state.time}</div>
+    )
   }
 }

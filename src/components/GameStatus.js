@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import Clock from './Clock';
 
 require('styles//GameStatus.css');
 
@@ -15,9 +16,7 @@ export default class GameStatus extends React.Component {
 
     return (
       <div className="game-status clearfix">
-        <div className="time">
-          Time: {this.props.time}
-        </div>
+        <Clock mode={this.props.clockMode} />
         <div className="smiley" onClick={this.props.resetGame}>
           <i className={status} />
         </div>

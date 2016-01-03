@@ -21,10 +21,6 @@ export default class Minesweeper extends React.Component {
   // 1 = beginner, 2 = intermediate, 3 = expert
   newGame(difficulty) {
     var settings = this.getGameSettings(difficulty);
-
-    if (this.isClockRunning())
-      this.stopClock();
-
     this.setState(settings);
   }
 
@@ -39,9 +35,7 @@ export default class Minesweeper extends React.Component {
       difficulty: difficulty,
       rows: config.rows,
       cols: config.cols,
-      mines: config.mines,
-      time: 0,
-      clockId: 0
+      mines: config.mines
     }
   }
 
@@ -53,40 +47,19 @@ export default class Minesweeper extends React.Component {
     return this.state.status && this.state.status === 'gameover';
   }
 
-  startClock() {
-    var clockId = setInterval(this.clockTick.bind(this), 1000);
-    this.setState({ time: 0, clockId: clockId, status: 'playing' });
-  }
-
-  stopClock() {
-    clearInterval(this.state.clockId);
-    this.setState({ clockId: 0, status: 'gameover' });
-  }
-
-  clockTick() {
-    this.setState({ time: ++this.state.time });
-  }
-
-  isClockRunning() {
-    return this.state.clockId && this.state.clockId > 0;
-  }
-
   flagCell(x, y) {
     if (this.isGameOver())
       return;
 
-    if (!this.isClockRunning())
-      this.startClock();
-
-    this.setState({ cells: MinesweeperModel.flagCell(this.state.cells, x, y) });
+    this.setState({
+      cells:  MinesweeperModel.flagCell(this.state.cells, x, y),
+      status: 'playing'
+    });
   }
 
   openCell(x, y) {
     if (this.isGameOver())
       return;
-
-    if (!this.isClockRunning())
-      this.startClock();
 
     var cells = this.state.cells,
         cell  = cells[x][y];
@@ -95,14 +68,22 @@ export default class Minesweeper extends React.Component {
       return;
 
     if (cell.isMine) {
-      this.setState({ cells: MinesweeperModel.revealMines(cells) });
-      this.stopClock();
+      this.setState({
+        cells:  MinesweeperModel.revealMines(cells),
+        status: 'gameover'
+      });
     }
     else if (cell.isEmpty) {
-      this.setState({ cells: MinesweeperModel.revealSiblings(cells, x, y) });
+      this.setState({
+        cells:  MinesweeperModel.revealSiblings(cells, x, y),
+        status: 'playing'
+      });
     }
     else {
-      this.setState({ cells: MinesweeperModel.revealCell(cells, x, y) });
+      this.setState({
+        cells:  MinesweeperModel.revealCell(cells, x, y),
+        status: 'playing'
+      });
     }
   }
 
@@ -110,10 +91,19 @@ export default class Minesweeper extends React.Component {
     return this.state.mines - MinesweeperModel.countFlags(this.state.cells);
   }
 
+  clockMode(status) {
+    switch (status) {
+      case 'init':     return 'reset';
+      case 'playing':  return 'on';
+      case 'gameover': return 'off';
+      default:         return 'off';
+    }
+  }
+
   render() {
     return (
       <div className="minesweeper">
-        <GameStatus time={this.state.time}
+        <GameStatus clockMode={this.clockMode(this.state.status)}
                     status={this.state.status}
                     mines={this.minesRemaining()}
                     resetGame={this.resetGame.bind(this)} />
