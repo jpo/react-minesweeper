@@ -41,7 +41,7 @@ export default class Minesweeper extends React.Component {
     return this.state.status === this.status.gameover;
   }
 
-  getMinesRemaining() {
+  getRemainingMineCount() {
     return this.state.mines - this.state.flagged;
   }
 
@@ -118,7 +118,7 @@ export default class Minesweeper extends React.Component {
       <div className="minesweeper">
         <GameStatus clockMode={this.state.clock}
                     status={this.state.status}
-                    mines={this.getMinesRemaining()}
+                    mines={this.getRemainingMineCount()}
                     onResetGame={this.onResetGame.bind(this)} />
 
         <Minefield cells={this.state.cells}
