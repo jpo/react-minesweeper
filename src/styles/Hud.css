@@ -1,21 +1,21 @@
-.game-status {
+.hud {
   display: flex;
   margin-bottom: 10px;
 }
 
-.game-status > .time {
+.hud > .clock {
   flex: 1 30%;
   line-height: 60px;
   text-align: left;
 }
 
-.game-status > .smiley {
+.hud > .face {
   flex: 2 40%;
   font-size: 40px;
   text-align: center;
 }
 
-.game-status > .mines {
+.hud > .counter {
   flex: 3 30%;
   line-height: 60px;
   text-align: right;

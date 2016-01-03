@@ -1,12 +1,16 @@
 'use strict';
 
 import React from 'react';
-import GameStatus from './GameStatus'
+import Button from './Button'
+import Clock from './Clock'
+import Counter from './Counter'
+import Face from './Face'
 import Minefield from './Minefield'
-import Difficulty from './Difficulty'
 import MinesweeperModel from '../models/Minesweeper'
 
+require('styles//Hud.css');
 require('styles//Minesweeper.css');
+require('styles//Difficulty.css');
 
 export default class Minesweeper extends React.Component {
   constructor(props) {
@@ -45,7 +49,6 @@ export default class Minesweeper extends React.Component {
     return this.state.mines - this.state.flagged;
   }
 
-  // beginner:0, intermediate:1, expert:2
   onNewGame(difficulty) {
     var { rows, cols, mines } = this.difficulties[difficulty];
 
@@ -81,8 +84,9 @@ export default class Minesweeper extends React.Component {
     if (this.isGameOver())
       return;
 
-    var cells = this.state.cells,
-        cell  = cells[x][y];
+    var cells   = this.state.cells,
+        cell    = cells[x][y],
+        flagged = 0;
 
     if (cell.isOpen)
       return;
@@ -116,19 +120,28 @@ export default class Minesweeper extends React.Component {
   render() {
     return (
       <div className="minesweeper">
-        <GameStatus clockMode={this.state.clock}
-                    status={this.state.status}
-                    mines={this.getRemainingMineCount()}
-                    onResetGame={this.onResetGame.bind(this)} />
+        <div className="hud">
+          <Clock mode={this.state.clock} />
+          <Face status={this.state.status}
+                onClick={this.onResetGame.bind(this)} />
+          <Counter count={this.getRemainingMineCount()} />
+        </div>
 
         <Minefield cells={this.state.cells}
                    onOpenCell={this.onOpenCell.bind(this)}
                    onFlagCell={this.onFlagCell.bind(this)} />
 
-        <Difficulty difficulty={this.state.difficulty}
-                    onBeginner={this.onNewGame.bind(this, 0)}
-                    onIntermediate={this.onNewGame.bind(this, 1)}
-                    onExpert={this.onNewGame.bind(this, 2)} />
+        <div className="difficulty">
+          <Button onClick={this.onNewGame.bind(this, 0)}
+                  active={this.state.difficulty === 0}
+                  value="Beginner" />
+          <Button onClick={this.onNewGame.bind(this, 1)}
+                  active={this.state.difficulty === 1}
+                  value="Intermediate" />
+          <Button onClick={this.onNewGame.bind(this, 2)}
+                  active={this.state.difficulty === 2}
+                  value="Expert" />
+        </div>
       </div>
     );
   }

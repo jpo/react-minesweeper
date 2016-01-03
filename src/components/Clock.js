@@ -49,7 +49,7 @@ export default class Clock extends React.Component {
 
   render() {
     return (
-      <div className="time">Time: {this.state.time}</div>
+      <div className="clock">Time: {this.state.time}</div>
     )
   }
 }
