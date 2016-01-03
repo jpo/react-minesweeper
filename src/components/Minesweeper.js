@@ -4,6 +4,7 @@ import React from 'react';
 import GameStatus from './GameStatus'
 import Minefield from './Minefield'
 import Difficulty from './Difficulty'
+import MinesweeperModel from '../models/Minesweeper'
 import MinesweeperStore from '../stores/MinesweeperStore'
 
 require('styles//Minesweeper.css');
@@ -45,7 +46,7 @@ export default class Minesweeper extends React.Component {
 
     return {
       status: 'init',
-      cells: this.createMinefield(settings.rows, settings.cols, settings.mines),
+      cells: MinesweeperModel.newGame(settings.rows, settings.cols, settings.mines),
       difficulty: difficulty,
       rows: settings.rows,
       cols: settings.cols,
@@ -55,6 +56,7 @@ export default class Minesweeper extends React.Component {
     }
   }
 
+  /*
   createMinefield(rows, cols, mines) {
     var minefield = MinesweeperStore.generateMinefield(rows, cols, mines);
 
@@ -72,6 +74,7 @@ export default class Minesweeper extends React.Component {
       });
     });
   }
+  */
 
   isNewGame() {
     return this.state.status && this.state.status === 'init';
