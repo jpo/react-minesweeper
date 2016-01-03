@@ -53,22 +53,6 @@ export default class Minesweeper extends React.Component {
     return this.state.status && this.state.status === 'gameover';
   }
 
-  isWinner(cells) {
-    return cells.every((row) => {
-      return row.every((cell) => {
-        return (!cell.isMine && cell.isOpen) || (cell.isMine && !cell.isOpen);
-      });
-    });
-  }
-
-  isLoser(cells) {
-    return cells.some((row) => {
-      return row.some((cell) => {
-        return cell.isMine && cell.isOpen;
-      });
-    });
-  }
-
   startClock() {
     var clockId = setInterval(this.clockTick.bind(this), 1000);
     this.setState({ time: 0, clockId: clockId, status: 'playing' });

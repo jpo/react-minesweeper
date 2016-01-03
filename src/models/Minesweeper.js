@@ -112,4 +112,21 @@ export default class Minesweeper {
       }, 0);
     }, 0);
   }
+
+  static isWinner(cells) {
+    return cells.every((row) => {
+      return row.every((cell) => {
+        return (!cell.isMine && cell.isOpen) || (cell.isMine && !cell.isOpen);
+      });
+    });
+  }
+
+  static isLoser(cells) {
+    return cells.some((row) => {
+      return row.some((cell) => {
+        return cell.isMine && cell.isOpen;
+      });
+    });
+  }
+
 }
