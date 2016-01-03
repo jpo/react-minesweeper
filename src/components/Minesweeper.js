@@ -73,7 +73,7 @@ export default class Minesweeper extends React.Component {
       cells:   this.model.flagCell(this.state.cells, x, y),
       flagged: this.model.countFlags(this.state.cells),
       clock:   this.clock.on,
-      status:  this.clock.playing
+      status:  this.status.playing
     });
   }
 
@@ -90,7 +90,7 @@ export default class Minesweeper extends React.Component {
     if (cell.isMine) {
       this.setState({
         cells:   this.model.revealMines(cells),
-        flagged: this.model.countFlags(this.state.cells),
+        flagged: this.model.countFlags(cells),
         clock:   this.clock.paused,
         status:  this.status.gameover
       });
@@ -98,7 +98,7 @@ export default class Minesweeper extends React.Component {
     else if (cell.isEmpty) {
       this.setState({
         cells:   this.model.revealSiblings(cells, x, y),
-        flagged: this.model.countFlags(this.state.cells),
+        flagged: this.model.countFlags(cells),
         clock:   this.clock.on,
         status:  this.status.playing
       });
@@ -106,7 +106,7 @@ export default class Minesweeper extends React.Component {
     else {
       this.setState({
         cells:   this.model.revealCell(cells, x, y),
-        flagged: this.model.countFlags(this.state.cells),
+        flagged: this.model.countFlags(cells),
         clock:   this.clock.on,
         status:  this.status.playing
       });
