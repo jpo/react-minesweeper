@@ -10,18 +10,18 @@ export default class Difficulty extends React.Component {
   }
 
   render() {
-    var beginnerClass     = this.props.difficulty === 1 ? 'active' : '';
-    var intermediateClass = this.props.difficulty === 2 ? 'active' : '';
-    var expertClass       = this.props.difficulty === 3 ? 'active' : '';
+    var beginnerClass     = this.props.difficulty === 0 ? 'active' : '';
+    var intermediateClass = this.props.difficulty === 1 ? 'active' : '';
+    var expertClass       = this.props.difficulty === 2 ? 'active' : '';
 
     return (
       <div className="difficulty">
         <button className={beginnerClass}
-                onClick={this.props.beginner}>Beginner</button>
+                onClick={this.props.onBeginner}>Beginner</button>
         <button className={intermediateClass}
-                onClick={this.props.intermediate}>Intermediate</button>
+                onClick={this.props.onIntermediate}>Intermediate</button>
         <button className={expertClass}
-                onClick={this.props.expert}>Expert</button>
+                onClick={this.props.onExpert}>Expert</button>
       </div>
     );
   }

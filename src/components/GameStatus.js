@@ -17,7 +17,7 @@ export default class GameStatus extends React.Component {
     return (
       <div className="game-status clearfix">
         <Clock mode={this.props.clockMode} />
-        <div className="smiley" onClick={this.props.resetGame}>
+        <div className="smiley" onClick={this.props.onResetGame}>
           <i className={status} />
         </div>
         <div className="mines">

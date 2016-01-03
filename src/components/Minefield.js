@@ -23,8 +23,8 @@ export default class Minefield extends React.Component {
                     isOpen={cell.isOpen}
                     isMine={cell.isMine}
                     value={cell.value}
-                    openCell={this.props.openCell.bind(this)}
-                    flagCell={this.props.flagCell.bind(this)} />
+                    onOpenCell={this.props.onOpenCell.bind(this)}
+                    onFlagCell={this.props.onFlagCell.bind(this)} />
             )
           })}
         </tr>

@@ -27,20 +27,20 @@ export default class Cell extends React.Component {
       return '';
   }
 
-  handleClick() {
-    this.props.openCell(this.props.x, this.props.y);
+  onOpenCell() {
+    this.props.onOpenCell(this.props.x, this.props.y);
   }
 
-  handleContextMenu(e) {
+  onFlagCell(e) {
     e.preventDefault()
-    this.props.flagCell(this.props.x, this.props.y);
+    this.props.onFlagCell(this.props.x, this.props.y);
   }
 
   render() {
     return (
       <td className={this.getClassName()}
-          onClick={this.handleClick.bind(this)}
-          onContextMenu={this.handleContextMenu.bind(this)}>
+          onClick={this.onOpenCell.bind(this)}
+          onContextMenu={this.onFlagCell.bind(this)}>
         {this.getValue()}
       </td>
     );

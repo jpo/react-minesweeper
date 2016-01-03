@@ -33,12 +33,20 @@ export default class Minesweeper extends React.Component {
     };
   }
 
-  resetGame() {
-    this.newGame(this.state.difficulty);
+  componentWillMount() {
+    this.onNewGame(0);
+  }
+
+  isGameOver() {
+    return this.state.status === this.status.gameover;
+  }
+
+  getMinesRemaining() {
+    return this.state.mines - this.state.flagged;
   }
 
   // beginner:0, intermediate:1, expert:2
-  newGame(difficulty) {
+  onNewGame(difficulty) {
     var { rows, cols, mines } = this.difficulties[difficulty];
 
     this.setState({
@@ -53,11 +61,11 @@ export default class Minesweeper extends React.Component {
     });
   }
 
-  isGameOver() {
-    return this.state.status === this.status.gameover;
+  onResetGame() {
+    this.onNewGame(this.state.difficulty);
   }
 
-  flagCell(x, y) {
+  onFlagCell(x, y) {
     if (this.isGameOver())
       return;
 
@@ -69,7 +77,7 @@ export default class Minesweeper extends React.Component {
     });
   }
 
-  openCell(x, y) {
+  onOpenCell(x, y) {
     if (this.isGameOver())
       return;
 
@@ -105,30 +113,22 @@ export default class Minesweeper extends React.Component {
     }
   }
 
-  minesRemaining() {
-    return this.state.mines - this.state.flagged;
-  }
-
-  componentWillMount() {
-    this.newGame(0);
-  }
-
   render() {
     return (
       <div className="minesweeper">
         <GameStatus clockMode={this.state.clock}
                     status={this.state.status}
-                    mines={this.minesRemaining()}
-                    resetGame={this.resetGame.bind(this)} />
+                    mines={this.getMinesRemaining()}
+                    onResetGame={this.onResetGame.bind(this)} />
 
         <Minefield cells={this.state.cells}
-                   openCell={this.openCell.bind(this)}
-                   flagCell={this.flagCell.bind(this)} />
+                   onOpenCell={this.onOpenCell.bind(this)}
+                   onFlagCell={this.onFlagCell.bind(this)} />
 
         <Difficulty difficulty={this.state.difficulty}
-                    beginner={this.newGame.bind(this, 0)}
-                    intermediate={this.newGame.bind(this, 1)}
-                    expert={this.newGame.bind(this, 2)} />
+                    onBeginner={this.onNewGame.bind(this, 0)}
+                    onIntermediate={this.onNewGame.bind(this, 1)}
+                    onExpert={this.onNewGame.bind(this, 2)} />
       </div>
     );
   }
