@@ -33,10 +33,6 @@ export default class Minesweeper extends React.Component {
     });
   }
 
-  isNewGame() {
-    return this.state.status && this.state.status === 'init';
-  }
-
   isGameOver() {
     return this.state.status && this.state.status === 'gameover';
   }
