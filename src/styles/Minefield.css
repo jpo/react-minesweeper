@@ -11,8 +11,6 @@
   width: 25px;
   margin: 0;
   padding: 0;
-  font-weight: bold;
-  font-family: 'Arial Black','Arial', sans-serif;
   font-size: 16px;
   line-height: 16px;
   text-align: center;
@@ -23,13 +21,13 @@
 }
 
 .minefield td.open {
-  background-color: #E2E1E9;
+  background-color: #d8f4f8;
 }
 
 .minefield td.closed {
-  background-color: #CCC9D1;
+  background-color: #6bd5ea;
 }
 
 .minefield td.mine {
-  background-color: #F00807;
+  background-color: #f7c7c7;
 }

@@ -4,11 +4,11 @@
 
 .difficulty > button {
   border: 0;
-  background-color: #CCC9D1;
+  background-color: #6bd5ea;
   padding: 5px 10px;
   margin: 5px;
 }
 
 .difficulty > button.active {
-  background-color: #E2E1E9;
+  background-color: #d8f4f8;
 }
