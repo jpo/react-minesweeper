@@ -16,7 +16,7 @@ export default class Clock extends React.Component {
     this.setState({ clockId: clockId });
   }
 
-  stopClock() {
+  pauseClock() {
     clearInterval(this.state.clockId);
     this.setState({ clockId: null });
   }
@@ -35,14 +35,14 @@ export default class Clock extends React.Component {
       return;
 
     switch (nextProps.mode) {
-      case 'reset':
-        this.resetClock();
-        break;
-      case 'off':
-        this.stopClock();
-        break;
       case 'on':
         this.startClock();
+        break;
+      case 'off':
+        this.resetClock();
+        break;
+      case 'paused':
+        this.pauseClock();
         break;
     }
   }

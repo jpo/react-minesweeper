@@ -11,31 +11,50 @@ require('styles//Minesweeper.css');
 export default class Minesweeper extends React.Component {
   constructor(props) {
     super(props);
+
+    this.model = MinesweeperModel;
+
+    this.difficulties = [
+      {rows:  9, cols:  9, mines: 10},
+      {rows: 16, cols: 16, mines: 40},
+      {rows: 16, cols: 30, mines: 99}
+    ];
+
+    this.status = {
+      init:     'init',
+      playing:  'playing',
+      gameover: 'gameover'
+    };
+
+    this.clock = {
+      on:     'on',
+      off:    'off',
+      paused: 'paused'
+    };
   }
 
   resetGame() {
     this.newGame(this.state.difficulty);
   }
 
-  // 1 = beginner, 2 = intermediate, 3 = expert
+  // beginner:0, intermediate:1, expert:2
   newGame(difficulty) {
-    var config = (difficulty === 1) ? {rows:  9, cols:  9, mines: 10} :
-                 (difficulty === 2) ? {rows: 16, cols: 16, mines: 40} :
-                 (difficulty === 3) ? {rows: 16, cols: 30, mines: 99} : {};
+    var { rows, cols, mines } = this.difficulties[difficulty];
 
     this.setState({
-      status: 'init',
-      cells: MinesweeperModel.newGame(config.rows, config.cols, config.mines),
+      status:     this.status.init,
+      clock:      this.clock.off,
+      cells:      this.model.newGame(rows, cols, mines),
       difficulty: difficulty,
-      rows: config.rows,
-      cols: config.cols,
-      mines: config.mines,
-      flagged: 0
+      rows:       rows,
+      cols:       cols,
+      mines:      mines,
+      flagged:    0
     });
   }
 
   isGameOver() {
-    return this.state.status && this.state.status === 'gameover';
+    return this.state.status === this.status.gameover;
   }
 
   flagCell(x, y) {
@@ -43,9 +62,10 @@ export default class Minesweeper extends React.Component {
       return;
 
     this.setState({
-      cells:   MinesweeperModel.flagCell(this.state.cells, x, y),
-      flagged: MinesweeperModel.countFlags(this.state.cells),
-      status:  'playing'
+      cells:   this.model.flagCell(this.state.cells, x, y),
+      flagged: this.model.countFlags(this.state.cells),
+      clock:   this.clock.on,
+      status:  this.clock.playing
     });
   }
 
@@ -61,20 +81,26 @@ export default class Minesweeper extends React.Component {
 
     if (cell.isMine) {
       this.setState({
-        cells:  MinesweeperModel.revealMines(cells),
-        status: 'gameover'
+        cells:   this.model.revealMines(cells),
+        flagged: this.model.countFlags(this.state.cells),
+        clock:   this.clock.paused,
+        status:  this.status.gameover
       });
     }
     else if (cell.isEmpty) {
       this.setState({
-        cells:  MinesweeperModel.revealSiblings(cells, x, y),
-        status: 'playing'
+        cells:   this.model.revealSiblings(cells, x, y),
+        flagged: this.model.countFlags(this.state.cells),
+        clock:   this.clock.on,
+        status:  this.status.playing
       });
     }
     else {
       this.setState({
-        cells:  MinesweeperModel.revealCell(cells, x, y),
-        status: 'playing'
+        cells:   this.model.revealCell(cells, x, y),
+        flagged: this.model.countFlags(this.state.cells),
+        clock:   this.clock.on,
+        status:  this.status.playing
       });
     }
   }
@@ -83,23 +109,14 @@ export default class Minesweeper extends React.Component {
     return this.state.mines - this.state.flagged;
   }
 
-  clockMode(status) {
-    switch (status) {
-      case 'init':     return 'reset';
-      case 'playing':  return 'on';
-      case 'gameover': return 'off';
-      default:         return 'off';
-    }
-  }
-
   componentWillMount() {
-    this.newGame(1);
+    this.newGame(0);
   }
 
   render() {
     return (
       <div className="minesweeper">
-        <GameStatus clockMode={this.clockMode(this.state.status)}
+        <GameStatus clockMode={this.state.clock}
                     status={this.state.status}
                     mines={this.minesRemaining()}
                     resetGame={this.resetGame.bind(this)} />
@@ -109,9 +126,9 @@ export default class Minesweeper extends React.Component {
                    flagCell={this.flagCell.bind(this)} />
 
         <Difficulty difficulty={this.state.difficulty}
-                    beginner={this.newGame.bind(this, 1)}
-                    intermediate={this.newGame.bind(this, 2)}
-                    expert={this.newGame.bind(this, 3)} />
+                    beginner={this.newGame.bind(this, 0)}
+                    intermediate={this.newGame.bind(this, 1)}
+                    expert={this.newGame.bind(this, 2)} />
       </div>
     );
   }
