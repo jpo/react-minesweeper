@@ -8,8 +8,9 @@ export default class Face extends React.Component {
   }
 
   render() {
-    var icon = this.props.status === 'gameover' ? 'fa fa-frown-o'
-                                                : 'fa fa-smile-o';
+    var icon = this.props.status === 'winner'   ? 'fa fa-thumbs-o-up' :
+               this.props.status === 'gameover' ? 'fa fa-frown-o'     :
+                                                  'fa fa-smile-o';
 
     return (
       <div className="face" onClick={this.props.onClick}>

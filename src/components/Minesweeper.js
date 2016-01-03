@@ -27,7 +27,8 @@ export default class Minesweeper extends React.Component {
     this.status = {
       init:     'init',
       playing:  'playing',
-      gameover: 'gameover'
+      gameover: 'gameover',
+      winner:   'winner'
     };
 
     this.clock = {
@@ -113,6 +114,13 @@ export default class Minesweeper extends React.Component {
         flagged: this.model.countFlags(cells),
         clock:   this.clock.on,
         status:  this.status.playing
+      });
+    }
+
+    if (this.model.isWinner(cells)) {
+      this.setState({
+        clock:   this.clock.paused,
+        status:  this.status.winner
       });
     }
   }
