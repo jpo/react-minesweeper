@@ -1,11 +1,11 @@
 # ReactJS Minesweeper
 
-[http://github.com/jpo/react-minesweeper](http://github.com/jpo/react-minesweeper)
-
-## DESCRIPTION
 ReactJS Minesweeper is a Minesweeper clone written in JavaScript (ES2015)
 using the ReactJS library.
 
+Demo: [http://joshorourke.com/react-minesweeper](http://joshorourke.com/react-minesweeper)
+
+## SCREENSHOT
 <img src="https://raw.github.com/jpo/react-minesweeper/master/src/images/screenshot.png" />
 
 ## USAGE
