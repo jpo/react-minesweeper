@@ -1,6 +1,10 @@
 # OSX Files
 .DS_Store
 
+# Ignore deployment directories
+dist
+gh-pages
+
 # Logs
 logs
 *.log
