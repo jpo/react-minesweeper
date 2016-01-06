@@ -1,10 +1,25 @@
 'use strict';
 
+/**
+ * Model responsible for generating and manipulating the state of Minesweeper
+ * games.
+ */
 export default class Minesweeper {
-  // Difficulties:
-  //  Beginner = 9x9 field with 10 mines
-  //  Intermediate = 16x16 field with 40 mines
-  //  Expert = 30 x 16 field with 99 mines
+  /**
+   * Generates a two-dimensional array that represents a Minesweeper mine field.
+   *
+   * @param  {Number}  x
+   * The number of cells to create within the x-axis.
+   *
+   * @param  {Number}  y
+   * The number of cells to create within the y-axis.
+   *
+   * @param  {Number}  mineCount
+   * The number of mines to randomly place throughout the mine field.
+   *
+   * @return {Array}
+   * A two-dimensional array representing a mine field.
+   */
   static newGame(x, y, mineCount) {
     var minefield = [];
 
@@ -65,17 +80,69 @@ export default class Minesweeper {
     });
   }
 
+  /**
+   * Given a two-dimensional array representing a mine field, marks the cell
+   * at the given x,y coordinate as flagged.
+   *
+   * @param  {Array} cells
+   * A two-dimensional array representing a mine field's current state.
+
+   * @param  {Number}  x
+   * The number of cells to create within the x-axis.
+   *
+   * @param  {Number}  y
+   * The number of cells to create within the y-axis.
+   *
+   * @return {Array}
+   * A two-dimensional array representing the updated state of the given mine field.
+   */
   static flagCell(cells, x, y) {
     cells[x][y].isFlagged = !cells[x][y].isFlagged;
     return cells;
   }
 
+  /**
+   * Given a two-dimensional array representing a mine field, marks the cell
+   * at the given x,y coordinate as open. If the cell was previously marked as
+   * flagged, the flag will be removed.
+   *
+   * @param  {Array} cells
+   * A two-dimensional array representing a mine field's current state.
+
+   * @param  {Number}  x
+   * The number of cells to create within the x-axis.
+   *
+   * @param  {Number}  y
+   * The number of cells to create within the y-axis.
+   *
+   * @return {Array}
+   * A two-dimensional array representing the updated state of the given mine field.
+   */
   static openCell(cells, x, y) {
     cells[x][y].isOpen    = true;
     cells[x][y].isFlagged = false;
     return cells;
   }
 
+  /**
+   * Given a two-dimensional array representing a mine field, marks the cell
+   * at the given x,y coordinate as open. Then, recursively searches through
+   * sibling cells that do not contain a mine and opens them as well. This
+   * method is chiefly used to create a "cascade" effect when opening an empty
+   * cell.
+   *
+   * @param  {Array} cells
+   * A two-dimensional array representing a mine field's current state.
+
+   * @param  {Number}  x
+   * The number of cells to create within the x-axis.
+   *
+   * @param  {Number}  y
+   * The number of cells to create within the y-axis.
+   *
+   * @return {Array}
+   * A two-dimensional array representing the updated state of the given mine field.
+   */
   static openSiblings(cells, x, y) {
     if (cells[x]    === undefined) return cells;
     if (cells[x][y] === undefined) return cells;
@@ -95,6 +162,17 @@ export default class Minesweeper {
     return cells;
   }
 
+  /**
+   * Given a two-dimensional array representing a mine field, marks all of the
+   * mines as open. This method is chiefly used to reveal all mines after a
+   * playing has lost the game.
+   *
+   * @param  {Array} cells
+   * A two-dimensional array representing a mine field's current state.
+
+   * @return {Array}
+   * A two-dimensional array representing the updated state of the given mine field.
+   */
   static openMines(cells) {
     return cells.map((row) => {
       return row.map((cell) => {
@@ -105,6 +183,16 @@ export default class Minesweeper {
     });
   }
 
+  /**
+   * Given a two-dimensional array representing a mine field, returns the number
+   * of cells that have been marked as flagged.
+   *
+   * @param  {Array} cells
+   * A two-dimensional array representing a mine field's current state.
+
+   * @return {Number}
+   * A number representing the number of cells that have been flagged.
+   */
   static countFlags(cells) {
     return cells.reduce((memo1, row) => {
       return memo1 + row.reduce((memo2, cell) => {
@@ -113,6 +201,17 @@ export default class Minesweeper {
     }, 0);
   }
 
+  /**
+   * Given a two-dimensional array representing a mine field, returns a boolean
+   * indicating whether or not the player has won the game. A game is considered
+   * to be won when all cells that do not contain mines have been opened.
+   *
+   * @param  {Array} cells
+   * A two-dimensional array representing a mine field's current state.
+
+   * @return {Boolean}
+   * A boolean representing whether or not the player has won the game.
+   */
   static isWinner(cells) {
     return cells.every((row) => {
       return row.every((cell) => {
@@ -121,6 +220,17 @@ export default class Minesweeper {
     });
   }
 
+  /**
+   * Given a two-dimensional array representing a mine field, returns a boolean
+   * indicating whether or not the player has lost the game. A game is considered
+   * to be lost when any cell containing a mine has been opened.
+   *
+   * @param  {Array} cells
+   * A two-dimensional array representing a mine field's current state.
+
+   * @return {Boolean}
+   * A boolean representing whether or not the player has lost the game.
+   */
   static isLoser(cells) {
     return cells.some((row) => {
       return row.some((cell) => {
@@ -128,5 +238,4 @@ export default class Minesweeper {
       });
     });
   }
-
 }
