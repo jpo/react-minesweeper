@@ -17,3 +17,21 @@ body {
 .clearfix {
     zoom: 1;
 }
+
+.title {
+  text-align: center;
+}
+
+#app {
+  margin-bottom: 40px;
+}
+
+.instructions {
+  font-size: 18px;
+  margin: 0 auto;
+  width: 600px;
+}
+
+.instructions > ol > li {
+  margin-bottom: 0.75em;
+}
