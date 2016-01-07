@@ -18,20 +18,11 @@ body {
     zoom: 1;
 }
 
-.title {
+#app-title,
+#app-badges {
   text-align: center;
 }
 
 #app {
-  margin-bottom: 40px;
-}
-
-.instructions {
-  font-size: 18px;
-  margin: 0 auto;
-  width: 600px;
-}
-
-.instructions > ol > li {
-  margin-bottom: 0.75em;
+  margin-bottom: 20px;
 }
