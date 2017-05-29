@@ -4,19 +4,20 @@
 }
 
 .hud > .clock {
-  flex: 1 30%;
   line-height: 60px;
   text-align: left;
+  width: 30%;
 }
 
 .hud > .face {
-  flex: 2 40%;
   font-size: 40px;
   text-align: center;
+  width: 40%;
 }
 
 .hud > .counter {
   flex: 3 30%;
   line-height: 60px;
   text-align: right;
+  width: 30%;
 }

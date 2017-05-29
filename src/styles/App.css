@@ -5,17 +5,17 @@ body {
 
 .clearfix:before,
 .clearfix:after {
-    content: "";
-    display: table;
+  content: "";
+  display: table;
 }
 
 .clearfix:after {
-    clear: both;
+  clear: both;
 }
 
 /* for IE 6 & 7 */
 .clearfix {
-    zoom: 1;
+  zoom: 1;
 }
 
 #app-title,

@@ -1,21 +1,20 @@
-'use strict';
-
 import React from 'react';
+import { connect } from 'react-redux';
+import { newGame } from '../actions';
 
-export default class Button extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+let Button = ({dispatch, value, text, active}) => {
+  const onClick = () => {
+    dispatch(newGame(value));
+  };
 
-  render() {
-    var className = this.props.active ? 'active' : '';
+  return (
+    <button className={active ? 'active' : ''}
+            value={value}
+            onClick={onClick}>
+      {text}
+    </button>
+  );
+};
 
-    return (
-      <button className={className}
-              value={this.props.value}
-              onClick={this.props.onClick}>
-        {this.props.value}
-      </button>
-    );
-  }
-}
+Button = connect()(Button);
+export default Button;

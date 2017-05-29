@@ -1,44 +1,35 @@
-'use strict';
-
 import React from 'react';
-import Cell from './Cell'
+import Cell from './Cell';
+import '../styles/Minefield.css';
 
-require('styles//Minefield.css');
-
-export default class Minefield extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    var cells = this.props.cells.map((row, rowIndex) => {
-      return (
-        <tr key={'row-' + rowIndex}>
-          {row.map((cell, cellIndex) => {
-            return (
-              <Cell key={'col-' + cellIndex}
-                    x={cell.x}
-                    y={cell.y}
-                    isFlagged={cell.isFlagged}
-                    isOpen={cell.isOpen}
-                    isMine={cell.isMine}
-                    value={cell.value}
-                    onOpenCell={this.props.onOpenCell.bind(this)}
-                    onFlagCell={this.props.onFlagCell.bind(this)} />
-            )
-          })}
-        </tr>
-      )
-    });
-
+const Minefield = ({cells}) => {
+  const renderField = (cells) => {
     return (
       <div className="minefield">
-        <table border="1">
+        <table>
           <tbody>
-            {cells}
+            {cells.map((r,i) => renderRow(r,i))}
           </tbody>
         </table>
       </div>
     );
-  }
-}
+  };
+
+  const renderRow = (row, index) => {
+    return (
+      <tr key={'row-' + index}>
+        {row.map((c,i) => renderCell(c,i))}
+      </tr>
+    );
+  };
+
+  const renderCell = (cell, index) => {
+    return (
+      <Cell key={'col-' + index} {...cell} />
+    );
+  };
+
+  return renderField(cells);
+};
+
+export default Minefield;

@@ -1,14 +1,12 @@
-'use strict';
-
 import React from 'react';
 
-export default class Clock extends React.Component {
+class Clock extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       clockId: 0,
       time: 0
-    }
+    };
   }
 
   startClock() {
@@ -44,12 +42,17 @@ export default class Clock extends React.Component {
       case 'paused':
         this.pauseClock();
         break;
+      default:
+        this.pauseClock();
+        break;
     }
   }
 
   render() {
     return (
       <div className="clock">Time: {this.state.time}</div>
-    )
+    );
   }
 }
+
+export default Clock;
