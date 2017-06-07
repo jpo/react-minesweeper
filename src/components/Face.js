@@ -7,12 +7,12 @@ let Face = ({dispatch, difficulty, status}) => {
                status === 'gameover' ? 'fa fa-frown-o'     :
                                        'fa fa-smile-o';
 
-  const resetGame = () => {
+  const onResetGame = () => {
     dispatch(newGame(difficulty));
   };
 
   return (
-    <div className="face" onClick={resetGame}>
+    <div className="face" onClick={onResetGame}>
       <i className={icon} />
     </div>
   );

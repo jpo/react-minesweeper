@@ -25,7 +25,7 @@ const Minefield = ({cells}) => {
 
   const renderCell = (cell, index) => {
     return (
-      <Cell key={'col-' + index} {...cell} />
+      <Cell key={'col-' + index} {...cell.toObject()} />
     );
   };
 

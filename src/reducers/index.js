@@ -1,9 +1,11 @@
-const initialState = {
+import { List, Map } from 'immutable';
+
+const initialState = Map({
   status: 'init',
   clock: 'off',
   difficulty: 0,
-  cells: []
-};
+  cells: List()
+});
 
 export const gameState = (state = initialState, action) => {
   switch(action.type) {
@@ -21,11 +23,11 @@ const newGame = (state, action) => {
   let { difficulty } = action;
   let { rows, cols, mines } = getDifficulty(difficulty);
   let cells = createCells(rows, cols, mines);
-  return { ...state, difficulty, mines, cells };
+  return state.merge({ difficulty, mines, cells });
 };
 
 const playGame = (state, action) => {
-  let {cells} = state,
+  let cells   = state.get('cells'),
       {x,y}   = action;
 
   if (isGameOver(cells) || isWinner(cells))
@@ -33,21 +35,21 @@ const playGame = (state, action) => {
 
   switch(action.type) {
     case 'OPEN_CELL':
-      return { ...state, cells: checkCell(cells, x, y) };
+      return state.merge({ cells: checkCell(cells, x, y) });
     case 'FLAG_CELL':
-      return { ...state, cells: flagCell(cells, x, y) };
+      return state.merge({ cells: flagCell(cells, x, y) });
     default:
       return state;
   }
-}
+};
 
-export const getStatus = (cells = []) => {
+export const getStatus = (cells) => {
   if (isGameOver(cells)) return 'gameover';
   if (isWinner(cells))   return 'winner';
   if (isPlaying(cells))  return 'playing';
 
   return 'init';
-}
+};
 
 export const getClock = (status = 'init') => {
   switch (status) {
@@ -57,9 +59,9 @@ export const getClock = (status = 'init') => {
     case 'init':     
     default:         return 'off';
   }
-}
+};
 
-export const countFlags = (cells = []) => {
+export const countFlags = (cells) => {
   return cells.reduce((memo1, row) => {
     return memo1 + row.reduce((memo2, cell) => {
       return memo2 + (cell.isFlagged ? 1 : 0);
@@ -68,23 +70,23 @@ export const countFlags = (cells = []) => {
 };
 
 const createCells = (rows, cols, mines) => {
-  let cells = [];
+  let cells = List();
 
   // Create minefield matrix (with padding)
   for (let i = 0; i < rows + 2; i++) {
-    cells[i] = [];
+    cells = cells.set(i, List());
     for (let j = 0; j < cols + 2; j++) {
-      cells[i][j] = 0;
+      cells = cells.setIn([i, j], 0);
     }
   }
 
   // Randomly lay mines within minefield
   let laid = 0;
   while (laid < mines) {
-    let coordX = Math.floor(Math.random() * rows + 1);
-    let coordY = Math.floor(Math.random() * cols + 1);
-    if (cells[coordX][coordY] === 0) {
-      cells[coordX][coordY] = '*';
+    let x = Math.floor(Math.random() * rows + 1);
+    let y = Math.floor(Math.random() * cols + 1);
+    if (cells.getIn([x,y]) === 0) {
+      cells = cells.setIn([x,y], '*');
       laid++;
     }
   }
@@ -94,27 +96,20 @@ const createCells = (rows, cols, mines) => {
     for (let j = 1; j <= cols; j++) {
       for (let ii = (i - 1); ii <= (i + 1); ii++) {
         for (let jj = (j - 1); jj <= (j + 1); jj++) {
-          if (cells[i][j] !== '*' && cells[ii][jj] === '*')
-            cells[i][j]++;
+          if (cells.getIn([i,j]) !== '*' && cells.getIn([ii,jj]) === '*')
+            cells = cells.updateIn([i,j], (val) => val + 1);
         }
       }
     }
   }
 
   // Remove padding
-  cells = cells.map((row) => {
-    row.shift();
-    row.pop();
-    return row;
-  });
-
-  cells.shift();
-  cells.pop();
+  cells = cells.map((r) => r.slice(1, -1)).slice(1, -1);
 
   // Convert individual cells to objects.
   return cells.map((row, rowIndex) => {
     return row.map((col, colIndex) => {
-      return {
+      return Map({
         x: rowIndex,
         y: colIndex,
         value: col,
@@ -122,21 +117,21 @@ const createCells = (rows, cols, mines) => {
         isFlagged: false,
         isEmpty: (col === 0),
         isMine: (col === '*')
-      };
+      });
     });
   });
-}
+};
 
-const checkCell = (cells = [], x, y) => {
-  let cell = cells[x][y];
+const checkCell = (cells, x, y) => {
+  let cell = cells.getIn([x,y]);
 
-  if (cell.isOpen)
+  if (cell.get('isOpen'))
     return cells;
 
-  if (cell.isMine)
+  if (cell.get('isMine'))
     return openMines(cells, x, y);
 
-  if (cell.isEmpty)
+  if (cell.get('isEmpty'))
     return openSiblings(cells, x, y);
 
   return openCell(cells, x, y);
@@ -145,20 +140,20 @@ const checkCell = (cells = [], x, y) => {
 const openMines = (cells) => {
   return cells.map((row) => {
     return row.map((cell) => {
-      if (cell.isMine)
-        return { ...cell, isOpen: true };
+      if (cell.get('isMine'))
+        return cell.set('isOpen', true);
       return cell;
     });
   });
 };
 
 const openSiblings = (cells, x, y) => {
-  if (cells[x]    === undefined) return cells;
-  if (cells[x][y] === undefined) return cells;
-  if (cells[x][y].isOpen)        return cells;
+  if (x < 0 || cells.get(x)       === undefined) return cells;
+  if (y < 0 || cells.getIn([x,y]) === undefined) return cells;
+  if (cells.getIn([x, y, 'isOpen']))             return cells;
 
   let nextCells = openCell(cells, x, y);
-  if (nextCells[x][y].isEmpty) {
+  if (nextCells.getIn([x, y, 'isEmpty'])) {
     for (let xx = (x - 1); xx <= (x + 1); xx++) {
       for (let yy = (y - 1); yy <= (y + 1); yy++) {
         nextCells = openSiblings(nextCells, xx, yy);
@@ -167,53 +162,54 @@ const openSiblings = (cells, x, y) => {
   }
 
   return nextCells;
-}
+};
 
 const openCell = (cells, x, y) => {
   return cells.map((row) => {
     return row.map((cell) => {
-      if (cell.x === x && cell.y === y)
-        return { ...cell, isOpen: true, isFlagged: false };
-      else
-        return cell;
-    });
-  });
-}
-
-const flagCell = (cells, x, y) => {
-  return cells.map((row) => {
-    return row.map((cell) => {
-      if (cell.x === x && cell.y === y)
-        return { ...cell, isFlagged: !cell.isFlagged };
+      if (cell.get('x') === x && cell.get('y') === y)
+        return cell.merge({ isOpen: true, isFlagged: false });
       else
         return cell;
     });
   });
 };
 
-const isGameOver = (cells = []) => {
-  return cells.some((row) => {
-    return row.some((cell) => {
-      return cell.isMine && cell.isOpen;
+const flagCell = (cells, x, y) => {
+  return cells.map((row) => {
+    return row.map((cell) => {
+      if (cell.get('x') === x && cell.get('y') === y)
+        return cell.set('isFlagged', !cell.get('isFlagged'));
+      else
+        return cell;
     });
   });
-}
+};
+
+const isGameOver = (cells) => {
+  return cells.some((row) => {
+    return row.some((cell) => {
+      return cell.get('isMine') && cell.get('isOpen');
+    });
+  });
+};
 
 const isWinner = (cells = []) => {
   return cells.every((row) => {
     return row.every((cell) => {
-      return (!cell.isMine && cell.isOpen) || (cell.isMine && !cell.isOpen);
+      return (!cell.get('isMine') && cell.get('isOpen')) 
+              || (cell.get('isMine') && !cell.get('isOpen'));
     });
   });
-}
+};
 
 const isPlaying = (cells = []) => {
   return cells.some((row) => {
     return row.some((cell) => {
-      return cell.isOpen || cell.isFlagged;
+      return cell.get('isOpen') || cell.get('isFlagged');
     });
   });
-}
+};
 
 const getDifficulty = (difficulty) => {
   switch (difficulty) {
