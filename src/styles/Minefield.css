@@ -24,7 +24,8 @@
   background-color: #d8f4f8;
 }
 
-.minefield td.closed {
+.minefield td.closed,
+.minefield td.flag {
   background-color: #6bd5ea;
 }
 

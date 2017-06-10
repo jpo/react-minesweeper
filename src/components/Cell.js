@@ -3,34 +3,30 @@ import {connect} from 'react-redux';
 import {openCell, openEmpty, openFlag, openMine, flagCell} from '../actions';
 
 let Cell = ({dispatch, ...cell}) => {
+  const isOpen  = cell.status === 'open';
+  const isFlag  = cell.status === 'flag';
+  const isEmpty = cell.value  === 0;
+  const isMine  = cell.value  === '*';
+
   const getClassName = () => {
-    if (cell.isOpen && cell.isMine)
-      return 'mine';
-    else if (cell.isOpen)
-      return 'open';
-    else
-      return 'closed';
+    return `${cell.status} ${(isOpen && isMine) ? "mine" : ""}`;
   };
 
   const getValue = () => {
-    if (!cell.isOpen && cell.isFlagged)
-      return <i className="fa fa-flag" />;
-    else if (cell.isOpen && cell.isMine)
-      return <i className="fa fa-bomb" />;
-    else if (cell.isOpen && cell.value > 0)
-      return cell.value;
-    else
-      return '';
+    if (isFlag)             return <i className="fa fa-flag" />;
+    if (isOpen && isMine)   return <i className="fa fa-bomb" />;
+    if (isOpen && !isEmpty) return cell.value;
+    return '';
   };
 
   const onClick = () => {
-    if (cell.isOpen) return;
+    if (isOpen) return;
 
-    if (cell.isMine) 
+    if (isMine) 
       dispatch(openMine(cell.x, cell.y));
-    else if (cell.isEmpty)
+    else if (isEmpty)
       dispatch(openEmpty(cell.x, cell.y));
-    else if (cell.isFlagged)
+    else if (isFlag)
       dispatch(openFlag(cell.x, cell.y));
     else
       dispatch(openCell(cell.x, cell.y));
@@ -42,9 +38,7 @@ let Cell = ({dispatch, ...cell}) => {
   };
 
   return (
-    <td className={getClassName()}
-        onClick={onClick}
-        onContextMenu={onContextMenu}>
+    <td className={getClassName()} onClick={onClick} onContextMenu={onContextMenu}>
       {getValue()}
     </td>
   );

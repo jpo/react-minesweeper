@@ -34,31 +34,31 @@ const newGame = (state, action) => {
 };
 
 const openCell = (state, {x,y}) => {
-  return state.mergeIn(['cells', x, y], {'isOpen': true, 'isFlagged': false});
+  return state.setIn(['cells', x, y, 'status'], 'open');
 };
 
 const openEmpty = (state, {x,y}) => {
   const openSiblings = (cells, x, y) => {
-    if (x < 0 || y < 0 || cells.getIn([x, y, 'isOpen'], true))
+    if (cells.getIn([x, y, 'status']) === 'open')
       return cells;
 
-    let nextCells = cells.setIn([x, y, 'isOpen'], true);
-    if (nextCells.getIn([x, y, 'isEmpty'])) {
-      for (let xx = (x - 1); xx <= (x + 1); xx++) {
-        for (let yy = (y - 1); yy <= (y + 1); yy++) {
-          nextCells = openSiblings(nextCells, xx, yy);
-        }
-      }
+    cells = cells.setIn([x, y, 'status'], 'open');
+
+    if (cells.getIn([x, y, 'value']) === 0) {
+      cells.flatten(1)
+           .filter((c)  => c.get('x') >= x-1 && c.get('x') <= x+1)
+           .filter((c)  => c.get('y') >= y-1 && c.get('y') <= y+1)
+           .forEach((c) => cells = openSiblings(cells, c.get('x'), c.get('y')));
     }
 
-    return nextCells;
+    return cells;
   };
 
   return state.update('cells', cells => openSiblings(cells, x, y));
 };
 
 const openFlag = (state, {x,y}) => {
-  return state.mergeIn(['cells', x, y], {'isOpen': true, 'isFlagged': false});
+  return state.setIn(['cells', x, y, 'status'], 'open');
 };
 
 const openMine = (state, {x,y}) => {
@@ -66,8 +66,8 @@ const openMine = (state, {x,y}) => {
 
   cells = cells.map((row) => {
     return row.map((cell) => {
-      if (cell.get('isMine'))
-        return cell.set('isOpen', true);
+      if (cell.get('value') === '*')
+        return cell.set('status', 'open');
       return cell;
     });
   });
@@ -76,7 +76,7 @@ const openMine = (state, {x,y}) => {
 };
 
 const flagCell = (state, {x,y}) => {
-  return state.updateIn(['cells', x , y, 'isFlagged'], val => !val);
+  return state.updateIn(['cells', x , y, 'status'], s => s === 'flag' ? 'closed' : 'flag' );
 };
 
 const createCells = (rows, cols, mines) => {
@@ -106,23 +106,9 @@ const createCells = (rows, cols, mines) => {
     }
   }
 
-  // Remove padding
-  cells = cells.map((r) => r.slice(1, -1)).slice(1, -1);
-
-  // Convert individual cells to objects.
-  return cells.map((row, rowIndex) => {
-    return row.map((col, colIndex) => {
-      return Map({
-        x: rowIndex,
-        y: colIndex,
-        value: col,
-        isOpen: false,
-        isFlagged: false,
-        isEmpty: (col === 0),
-        isMine: (col === '*')
-      });
-    });
-  });
+  return cells.slice(1, -1)
+              .map((r) => r.slice(1, -1))
+              .map((row, x) => row.map((value, y) => Map({ x, y, value, status: 'closed' })));
 };
 
 const getDifficulty = (difficulty) => {
