@@ -1,7 +1,7 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { newGame } from '../actions';
-import { getClock, getStatus, countFlags } from '../reducers';
+import {connect} from 'react-redux';
+import {newGame} from '../actions';
+import {getClock, getStatus, countFlags} from '../reducers';
 import Difficulty from './Difficulty';
 import Hud from './Hud';
 import Minefield from './Minefield';
@@ -15,12 +15,7 @@ class Minesweeper extends React.Component {
   render() {
     return (
       <div className="minesweeper">
-        <Hud clock={this.props.clock}
-             status={this.props.status}
-             mines={this.props.mines}
-             flagged={this.props.flagged}
-             difficulty={this.props.difficulty} />
-
+        <Hud />
         <Minefield cells={this.props.cells} />
         <Difficulty value={this.props.difficulty} />
       </div>
@@ -29,12 +24,8 @@ class Minesweeper extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  let cells   = state.get('cells'),
-      status  = getStatus(cells),
-      clock   = getClock(status),
-      flagged = countFlags(cells);
-
-  return state.merge({ state, status, clock, flagged }).toObject();
+  let cells = state.get('cells');
+  return state.merge({ cells }).toObject();
 };
 
 Minesweeper = connect(mapStateToProps)(Minesweeper);

@@ -1,6 +1,6 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { newGame } from '../actions';
+import {connect} from 'react-redux';
+import {newGame} from '../actions';
 
 let Button = ({dispatch, value, text, active}) => {
   const onClick = () => {
