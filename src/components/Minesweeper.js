@@ -16,7 +16,7 @@ class Minesweeper extends React.Component {
     return (
       <div className="minesweeper">
         <Hud />
-        <Minefield cells={this.props.cells} />
+        <Minefield rows={this.props.rows} cols={this.props.cols} cells={this.props.cells} />
         <Difficulty value={this.props.difficulty} />
       </div>
     );
@@ -24,8 +24,7 @@ class Minesweeper extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  let cells = state.get('cells');
-  return state.merge({ cells }).toObject();
+  return state.toObject();
 };
 
 Minesweeper = connect(mapStateToProps)(Minesweeper);

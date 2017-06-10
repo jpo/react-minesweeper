@@ -10,7 +10,7 @@ export const gameState = (state = initialState, action) => {
     case 'NEW_GAME':
       return newGame(initialState, action);
     case 'RESET_GAME':
-      return newGame(state, action);
+      return resetGame(state, action);
     case 'OPEN_CELL':
       return openCell(state, action);
     case 'OPEN_EMPTY':
@@ -30,96 +30,60 @@ const newGame = (state, action) => {
   let { difficulty } = action;
   let { rows, cols, mines } = getDifficulty(difficulty);
   let cells = createCells(rows, cols, mines);
-  return state.merge({ difficulty, mines, cells });
+  return state.merge({ difficulty, rows, cols, mines, cells });
 };
 
-const openCell = (state, {x,y}) => {
-  return state.setIn(['cells', x, y, 'status'], 'open');
+const resetGame = (state, action) => {
+  let { rows, cols, mines } = state.toObject();
+  return state.set('cells', createCells(rows, cols, mines));
 };
 
-const openEmpty = (state, {x,y}) => {
-  const openSiblings = (cells, x, y) => {
-    if (cells.getIn([x, y, 'status']) === 'open')
+const openCell = (state, {id}) =>
+  state.setIn(['cells', id, 'status'], 'open');
+
+const openEmpty = (state, {id}) => {
+  const cascade = (cells, id) => {
+    let x = cells.getIn([id, 'x']),
+        y = cells.getIn([id, 'y']);
+
+    if (cells.getIn([id, 'status']) === 'open')
       return cells;
 
-    cells = cells.setIn([x, y, 'status'], 'open');
+    cells = cells.setIn([id, 'status'], 'open');
 
-    if (cells.getIn([x, y, 'value']) === 0) {
-      cells.flatten(1)
-           .filter((c)  => c.get('x') >= x-1 && c.get('x') <= x+1)
-           .filter((c)  => c.get('y') >= y-1 && c.get('y') <= y+1)
-           .forEach((c) => cells = openSiblings(cells, c.get('x'), c.get('y')));
-    }
+    if (cells.getIn([id, 'value']) !== 0)
+      return cells;
 
-    return cells;
+    return cells.filter(c     => c.get('x') >= x-1 && c.get('x') <= x+1)
+                .filter(c     => c.get('y') >= y-1 && c.get('y') <= y+1)
+                .reduce((m,c) => cascade(m, c.get('id')), cells);
   };
 
-  return state.update('cells', cells => openSiblings(cells, x, y));
+  return state.update('cells', cells => cascade(cells, id));
 };
 
-const openFlag = (state, {x,y}) => {
-  return state.setIn(['cells', x, y, 'status'], 'open');
-};
+const openFlag = (state, {id}) =>
+  state.setIn(['cells', id, 'status'], 'open');
 
-const openMine = (state, {x,y}) => {
-  let cells = state.get('cells');
+const openMine = (state, {id}) =>
+  state.update('cells', cs => cs.map(c => c.get('value') === '*' ? c.set('status', 'open') : c));
 
-  cells = cells.map((row) => {
-    return row.map((cell) => {
-      if (cell.get('value') === '*')
-        return cell.set('status', 'open');
-      return cell;
-    });
-  });
+const flagCell = (state, {id}) =>
+  state.updateIn(['cells', id, 'status'], s => s === 'flag' ? 'closed' : 'flag' );
 
-  return state.set('cells', cells);
-};
+const createCells = (rows, cols, mines) =>
+  List(Repeat(0, rows*cols))                      
+    .merge(Repeat('*', mines)).sortBy(Math.random)
+    .map((v,i) => Map({x: (i/rows|0), y: (i%cols), id: i, value: v, status: 'closed'}))
+    .update(cells => cells.reduce((m,c,i) =>
+      m.updateIn([i, 'value'], v => v === '*' ? '*' : m.count((n,j) => 
+          c.get('x') >= n.get('x')-1 && c.get('x') <= n.get('x')+1 &&
+          c.get('y') >= n.get('y')-1 && c.get('y') <= n.get('y')+1 &&
+          i != j && n.get('value') === '*')
+      ), cells));
 
-const flagCell = (state, {x,y}) => {
-  return state.updateIn(['cells', x , y, 'status'], s => s === 'flag' ? 'closed' : 'flag' );
-};
-
-const createCells = (rows, cols, mines) => {
-  // Create minefield matrix (with padding)
-  let cells = List(Repeat(List(Repeat(0, cols + 2)), rows + 2));
-
-  // Randomly lay mines within minefield
-  let laid = 0;
-  while (laid < mines) {
-    let x = Math.floor(Math.random() * rows + 1);
-    let y = Math.floor(Math.random() * cols + 1);
-    if (cells.getIn([x,y]) === 0) {
-      cells = cells.setIn([x,y], '*');
-      laid++;
-    }
-  }
-
-  // Add numbers to neighboring minefield cells
-  for (let i = 1; i <= rows; i++) {
-    for (let j = 1; j <= cols; j++) {
-      for (let ii = (i - 1); ii <= (i + 1); ii++) {
-        for (let jj = (j - 1); jj <= (j + 1); jj++) {
-          if (cells.getIn([i,j]) !== '*' && cells.getIn([ii,jj]) === '*')
-            cells = cells.updateIn([i,j], (val) => val + 1);
-        }
-      }
-    }
-  }
-
-  return cells.slice(1, -1)
-              .map((r) => r.slice(1, -1))
-              .map((row, x) => row.map((value, y) => Map({ x, y, value, status: 'closed' })));
-};
-
-const getDifficulty = (difficulty) => {
-  switch (difficulty) {
-    case 0:
-      return { rows: 9, cols: 9, mines: 10 };
-    case 1:
-      return { rows: 16, cols: 16, mines: 40 };
-    case 2:
-      return { rows: 16, cols: 30, mines: 99 };
-    default:
-      return { rows: 9, cols: 9, mines: 10 };
-  }
-};
+const getDifficulty = (difficulty) => [
+    {rows: 9, cols: 9, mines: 10},
+    {rows: 16, cols: 16, mines: 40},
+    {rows: 16, cols: 30, mines: 99}
+  ][difficulty];
