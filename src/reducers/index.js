@@ -79,7 +79,7 @@ const flagCell = (state, {id}) =>
 const createCells = (rows, cols, mines) =>
   List(Repeat(0, rows*cols))                      
     .merge(Repeat('*', mines)).sortBy(Math.random)
-    .map((v,i) => Map({x: (i/rows|0), y: (i%cols), id: i, value: v, status: 'closed'}))
+    .map((v,i) => Map({x: i/cols|0, y: i%cols, id: i, value: v, status: 'closed'}))
     .update(cells => cells.reduce((m,c,i) =>
       m.updateIn([i, 'value'], v => v !== '*'
         ? m.count((n,j) => c.get('x') >= n.get('x')-1 && c.get('x') <= n.get('x')+1 

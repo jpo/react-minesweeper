@@ -22,7 +22,7 @@ const Minefield = ({rows, cols, cells}) => {
     <Cell key={`col-${index}`} cell={cell} />;
 
   const toMatrix = (cells) =>
-    cells.reduce((r,c,i) => r.update(i%rows, List(), x => x.push(c)), List());
+    cells.reduce((r,c,i) => r.update(i/cols|0, List(), x => x.push(c)), List());
 
   return renderField(toMatrix(cells));
 };
