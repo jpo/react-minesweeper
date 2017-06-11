@@ -24,7 +24,12 @@ class Minesweeper extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  return state.toObject();
+  return {
+    difficulty: state.get('difficulty'),
+    cells:      state.get('cells'),
+    rows:       state.get('rows'),
+    cols:       state.get('cols')
+  };
 };
 
 Minesweeper = connect(mapStateToProps)(Minesweeper);

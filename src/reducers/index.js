@@ -10,7 +10,7 @@ export const gameState = (state = initialState, action) => {
     case 'NEW_GAME':
       return newGame(initialState, action);
     case 'RESET_GAME':
-      return resetGame(state, action);
+      return resetGame(state);
     case 'OPEN_CELL':
       return openCell(state, action);
     case 'OPEN_EMPTY':
@@ -18,7 +18,7 @@ export const gameState = (state = initialState, action) => {
     case 'OPEN_FLAG':
       return openFlag(state, action);
     case 'OPEN_MINE':
-      return openMine(state, action);
+      return openMine(state);
     case 'FLAG_CELL':
       return flagCell(state, action);
     default:
@@ -27,14 +27,18 @@ export const gameState = (state = initialState, action) => {
 };
 
 const newGame = (state, action) => {
-  let { difficulty } = action;
-  let { rows, cols, mines } = getDifficulty(difficulty);
-  let cells = createCells(rows, cols, mines);
+  let {difficulty}        = action,
+      {rows, cols, mines} = getDifficulty(difficulty),
+      cells               = createCells(rows, cols, mines);
+
   return state.merge({ difficulty, rows, cols, mines, cells });
 };
 
-const resetGame = (state, action) => {
-  let { rows, cols, mines } = state.toObject();
+const resetGame = (state) => {
+  let rows  = state.get('rows'),
+      cols  = state.get('cols'),
+      mines = state.get('mines');
+
   return state.set('cells', createCells(rows, cols, mines));
 };
 
@@ -62,22 +66,26 @@ const openEmpty = (state, {id}) => {
 const openFlag = (state, {id}) =>
   state.setIn(['cells', id, 'status'], 'open');
 
-const openMine = (state, {id}) =>
-  state.update('cells', cs => cs.map(c => c.get('value') === '*' ? c.set('status', 'open') : c));
+const openMine = (state) =>
+  state.update('cells', cs => 
+    cs.map(c => c.get('value') === '*' 
+      ? c.set('status', 'open') 
+      : c));
 
 const flagCell = (state, {id}) =>
-  state.updateIn(['cells', id, 'status'], s => s === 'flag' ? 'closed' : 'flag' );
+  state.updateIn(['cells', id, 'status'], s => 
+    s === 'flag' ? 'closed' : 'flag' );
 
 const createCells = (rows, cols, mines) =>
   List(Repeat(0, rows*cols))                      
     .merge(Repeat('*', mines)).sortBy(Math.random)
     .map((v,i) => Map({x: (i/rows|0), y: (i%cols), id: i, value: v, status: 'closed'}))
     .update(cells => cells.reduce((m,c,i) =>
-      m.updateIn([i, 'value'], v => v === '*' ? '*' : m.count((n,j) => 
-          c.get('x') >= n.get('x')-1 && c.get('x') <= n.get('x')+1 &&
-          c.get('y') >= n.get('y')-1 && c.get('y') <= n.get('y')+1 &&
-          i != j && n.get('value') === '*')
-      ), cells));
+      m.updateIn([i, 'value'], v => v !== '*'
+        ? m.count((n,j) => c.get('x') >= n.get('x')-1 && c.get('x') <= n.get('x')+1 
+                        && c.get('y') >= n.get('y')-1 && c.get('y') <= n.get('y')+1 
+                        && i != j && n.get('value') === '*')
+        : '*'), cells));
 
 const getDifficulty = (difficulty) => [
     {rows: 9, cols: 9, mines: 10},

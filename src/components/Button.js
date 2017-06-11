@@ -3,14 +3,14 @@ import {connect} from 'react-redux';
 import {newGame} from '../actions';
 
 let Button = ({dispatch, value, text, active}) => {
+  let className = active ? 'active' : '';
+
   const onClick = () => {
     dispatch(newGame(value));
   };
 
   return (
-    <button className={active ? 'active' : ''}
-            value={value}
-            onClick={onClick}>
+    <button className={className} value={value} onClick={onClick}>
       {text}
     </button>
   );

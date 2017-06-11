@@ -19,7 +19,7 @@ const Minefield = ({rows, cols, cells}) => {
     </tr>;
 
   const renderCell = (cell, index) =>
-    <Cell key={`col-${index}`} {...cell.toObject()} />;
+    <Cell key={`col-${index}`} cell={cell} />;
 
   const toMatrix = (cells) =>
     cells.reduce((r,c,i) => r.update(i%rows, List(), x => x.push(c)), List());

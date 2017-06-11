@@ -16,12 +16,6 @@ describe('NEW_GAME', () => {
     expect(cells.size).toBe(81);
   });
 
-  /*
-  test('cells should have 9 columns', () => {
-    expect(state.getIn(['cells', 0]).size).toBe(9);
-  });
-  */
-
   test('cells should have 10 mines', () => {
     let count = cells.count((c) => c.get('value') === '*');
     expect(count).toBe(10);

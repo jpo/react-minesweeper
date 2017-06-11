@@ -10,32 +10,32 @@ export const resetGame = () => {
   };
 };
 
-export const openCell = (cell, id) => {
+export const openCell = (id) => {
   return {
-    type: 'OPEN_CELL', cell, id 
+    type: 'OPEN_CELL', id 
   };
 };
 
-export const openEmpty = (cell, id) => {
+export const openEmpty = (id) => {
   return {
-    type: 'OPEN_EMPTY', cell, id 
+    type: 'OPEN_EMPTY', id 
   };
 };
 
-export const openFlag = (cell, id) => {
+export const openFlag = (id) => {
   return {
-    type: 'OPEN_FLAG', cell, id
+    type: 'OPEN_FLAG', id
   };
 };
 
-export const openMine = (cell, id) => {
+export const openMine = (id) => {
   return {
-    type: 'OPEN_MINE', cell, id
+    type: 'OPEN_MINE', id
   };
 };
 
-export const flagCell = (cell, id) => {
+export const flagCell = (id) => {
   return {
-    type: 'FLAG_CELL', cell, id
+    type: 'FLAG_CELL', id
   };
 };
