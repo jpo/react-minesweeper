@@ -46,17 +46,14 @@ const openEmpty = (state, {id}) => {
     let x = cells.getIn([id, 'x']),
         y = cells.getIn([id, 'y']);
 
-    if (cells.getIn([id, 'status']) === 'open')
-      return cells;
-
-    cells = cells.setIn([id, 'status'], 'open');
-
-    if (cells.getIn([id, 'value']) !== 0)
-      return cells;
-
-    return cells.filter(c     => c.get('x') >= x-1 && c.get('x') <= x+1)
-                .filter(c     => c.get('y') >= y-1 && c.get('y') <= y+1)
-                .reduce((m,c) => cascade(m, c.get('id')), cells);
+    return cells
+      .setIn([id, 'status'], 'open')
+      .update(cs => cs.getIn([id, 'value']) === 0
+        ? cs.filter(c => c.get('x') >= x-1 && c.get('x') <= x+1
+                      && c.get('y') >= y-1 && c.get('y') <= y+1
+                      && c.get('status') !== 'open')
+            .reduce((m,c) => cascade(m, c.get('id')), cs)
+        : cs);
   };
 
   return state.update('cells', cells => cascade(cells, id));
