@@ -20,9 +20,6 @@ export const gameState = (state = initialState, action) => {
     case 'OPEN_EMPTY':
       state = openEmpty(state, action);
       break;
-    case 'OPEN_FLAG':
-      state = openFlag(state, action);
-      break;
     case 'OPEN_MINE':
       state = openMine(state);
       break;
@@ -80,9 +77,6 @@ const openEmpty = (state, {id}) => {
 
   return state.update('cells', cells => cascade(cells, id));
 };
-
-const openFlag = (state, {id}) =>
-  state.setIn(['cells', id, 'status'], 'open');
 
 const openMine = (state) =>
   state.update('cells', cs => 

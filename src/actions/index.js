@@ -22,12 +22,6 @@ export const openEmpty = (id) => {
   };
 };
 
-export const openFlag = (id) => {
-  return {
-    type: 'OPEN_FLAG', id
-  };
-};
-
 export const openMine = (id) => {
   return {
     type: 'OPEN_MINE', id

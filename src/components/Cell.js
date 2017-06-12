@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {openCell, openEmpty, openFlag, openMine, flagCell} from '../actions';
+import {openCell, openEmpty, openMine, flagCell} from '../actions';
 
 let Cell = ({dispatch, cell}) => {
   const isOpen    = cell.get('status') === 'open';
@@ -21,8 +21,6 @@ let Cell = ({dispatch, cell}) => {
       dispatch(openMine(cell.get('id')));
     else if (isEmpty)
       dispatch(openEmpty(cell.get('id')));
-    else if (isFlag)
-      dispatch(openFlag(cell.get('id')));
     else
       dispatch(openCell(cell.get('id')));
   };
