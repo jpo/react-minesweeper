@@ -2,28 +2,42 @@ import {List, Map, Repeat} from 'immutable';
 
 const initialState = Map({
   difficulty: 0,
-  cells: List()
+  cells: List(),
+  stats: Map()
 });
 
 export const gameState = (state = initialState, action) => {
   switch(action.type) {
     case 'NEW_GAME':
-      return newGame(initialState, action);
+      state = newGame(initialState, action);
+      break;
     case 'RESET_GAME':
-      return resetGame(state);
+      state = resetGame(state);
+      break;
     case 'OPEN_CELL':
-      return openCell(state, action);
+      state = openCell(state, action);
+      break;
     case 'OPEN_EMPTY':
-      return openEmpty(state, action);
+      state = openEmpty(state, action);
+      break;
     case 'OPEN_FLAG':
-      return openFlag(state, action);
+      state = openFlag(state, action);
+      break;
     case 'OPEN_MINE':
-      return openMine(state);
+      state = openMine(state);
+      break;
     case 'FLAG_CELL':
-      return flagCell(state, action);
+      state = flagCell(state, action);
+      break;
     default:
       return state;
   }
+
+  let cells  = state.get('cells'),
+      stats  = getStats(cells),
+      status = getStatus(stats);
+
+  return state.merge(Map({stats, status}));
 };
 
 const newGame = (state, action) => {
@@ -41,6 +55,10 @@ const resetGame = (state) => {
 
   return state.set('cells', createCells(rows, cols, mines));
 };
+
+const flagCell = (state, {id}) =>
+  state.updateIn(['cells', id, 'status'], s => 
+    s === 'flag' ? 'closed' : 'flag' );
 
 const openCell = (state, {id}) =>
   state.setIn(['cells', id, 'status'], 'open');
@@ -72,9 +90,37 @@ const openMine = (state) =>
       ? c.set('status', 'open') 
       : c));
 
-const flagCell = (state, {id}) =>
-  state.updateIn(['cells', id, 'status'], s => 
-    s === 'flag' ? 'closed' : 'flag' );
+const getStatus = (stats) => {
+  if (stats.get('unopened') === 0)
+    return 'winner';
+  if (stats.get('detonated') > 0)
+    return 'loser';
+  if (stats.get('played') > 0)
+    return 'playing';
+
+  return 'new';
+};
+
+const getStats = (cells) => {
+  return cells.reduce((stats, cell) => {
+    if (cell.get('value') === '*')
+      stats = stats.update('unflagged', v => v + 1);
+
+    if (cell.get('status') === 'flag')
+      stats = stats.update('unflagged', v => v - 1);
+
+    if (cell.get('status') === 'open' && cell.get('value') === '*') 
+      stats = stats.update('detonated', v => v + 1);
+
+    if (cell.get('status') === 'closed' && cell.get('value') !== '*')
+      stats = stats.update('unopened', v => v + 1);
+
+    if (cell.get('status') !== 'closed')
+      stats = stats.update('played', v => v + 1);
+
+    return stats;
+  }, Map({detonated: 0, played: 0, unflagged: 0, unopened: 0}));
+};
 
 const createCells = (rows, cols, mines) =>
   List(Repeat(0, rows*cols))                      

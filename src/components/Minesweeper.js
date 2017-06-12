@@ -1,7 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {newGame} from '../actions';
-import {getClock, getStatus, countFlags} from '../reducers';
 import Difficulty from './Difficulty';
 import Hud from './Hud';
 import Minefield from './Minefield';
@@ -13,11 +12,12 @@ class Minesweeper extends React.Component {
   }
 
   render() {
+    let {difficulty, rows, cols, cells, stats, status} = this.props;
     return (
       <div className="minesweeper">
-        <Hud />
-        <Minefield rows={this.props.rows} cols={this.props.cols} cells={this.props.cells} />
-        <Difficulty value={this.props.difficulty} />
+        <Hud status={status} stats={stats} />
+        <Minefield rows={rows} cols={cols} cells={cells} />
+        <Difficulty value={difficulty} />
       </div>
     );
   }
@@ -26,9 +26,11 @@ class Minesweeper extends React.Component {
 const mapStateToProps = (state) => {
   return {
     difficulty: state.get('difficulty'),
-    cells:      state.get('cells'),
     rows:       state.get('rows'),
-    cols:       state.get('cols')
+    cols:       state.get('cols'),
+    cells:      state.get('cells'),
+    stats:      state.get('stats'),
+    status:     state.get('status')
   };
 };
 

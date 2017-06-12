@@ -29,19 +29,18 @@ class Clock extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.mode === nextProps.mode)
+    if (this.props.status === nextProps.status)
       return;
 
-    switch (nextProps.mode) {
-      case 'on':
-        this.startClock();
-        break;
-      case 'off':
+    switch (nextProps.status) {
+      case 'new':
         this.resetClock();
         break;
-      case 'paused':
-        this.pauseClock();
+      case 'playing':
+        this.startClock();
         break;
+      case 'winner':
+      case 'loser':
       default:
         this.pauseClock();
         break;

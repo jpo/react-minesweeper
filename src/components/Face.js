@@ -3,9 +3,9 @@ import {connect} from 'react-redux';
 import {resetGame} from '../actions';
 
 let Face = ({dispatch, status}) => {
-  const icon = status === 'winner'   ? 'fa fa-thumbs-o-up' :
-               status === 'gameover' ? 'fa fa-frown-o'     :
-                                       'fa fa-smile-o';
+  const icon = status === 'winner' ? 'fa fa-thumbs-o-up' :
+               status === 'loser'  ? 'fa fa-frown-o'     :
+                                     'fa fa-smile-o';
 
   const onClick = () => {
     dispatch(resetGame());
