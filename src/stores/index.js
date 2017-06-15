@@ -1,4 +1,4 @@
 import {createStore} from 'redux';
-import {gameState} from '../reducers';
+import {rootReducer} from '../reducers';
 
-export default createStore(gameState);
+export default createStore(rootReducer);

@@ -2,39 +2,46 @@ import {List, Map, Repeat} from 'immutable';
 
 const initialState = Map({
   difficulty: 0,
-  cells: List(),
-  stats: Map()
+  cells: List()
 });
 
-export const gameState = (state = initialState, action) => {
+export const rootReducer = (state = initialState, action) => {
+  let nextState = gameReducer(state, action);
+
+  if (!['winner', 'loser'].includes(nextState.get('status')))
+    nextState = cellReducer(nextState, action);
+
+  let cells = nextState.get('cells'),
+      stats = getStats(cells),
+      status = getStatus(stats);
+
+  return nextState.merge(Map({stats, status}));
+};
+
+const gameReducer = (state = initialState, action) => {
   switch(action.type) {
     case 'NEW_GAME':
-      state = newGame(initialState, action);
-      break;
+      return newGame(initialState, action);
     case 'RESET_GAME':
-      state = resetGame(state);
-      break;
-    case 'OPEN_CELL':
-      state = openCell(state, action);
-      break;
-    case 'OPEN_EMPTY':
-      state = openEmpty(state, action);
-      break;
-    case 'OPEN_MINE':
-      state = openMine(state);
-      break;
-    case 'FLAG_CELL':
-      state = flagCell(state, action);
-      break;
+      return resetGame(state);
     default:
       return state;
   }
+};
 
-  let cells  = state.get('cells'),
-      stats  = getStats(cells),
-      status = getStatus(stats);
-
-  return state.merge(Map({stats, status}));
+const cellReducer = (state, action) => {
+  switch(action.type) {
+    case 'OPEN_CELL':
+      return openCell(state, action);
+    case 'OPEN_EMPTY':
+      return openEmpty(state, action);
+    case 'OPEN_MINE':
+      return openMine(state);
+    case 'FLAG_CELL':
+      return flagCell(state, action);
+    default:
+      return state;
+  }
 };
 
 const newGame = (state, action) => {
