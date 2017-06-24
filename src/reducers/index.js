@@ -60,9 +60,15 @@ const resetGame = (state) => {
   return state.set('cells', createCells(rows, cols, mines));
 };
 
-const flagCell = (state, {id}) =>
-  state.updateIn(['cells', id, 'status'], s => 
-    s === 'flag' ? 'closed' : 'flag' );
+const flagCell = (state, {id}) => {
+  let remainingFlags = state.getIn(['stats', 'unflagged']); 
+  let isFlagged      = state.getIn(['cells', id, 'status']) === 'flag';
+
+  if (isFlagged || remainingFlags > 0) 
+    return state.updateIn(['cells', id, 'status'], () => isFlagged ? 'closed' : 'flag' );
+
+  return state;
+};
 
 const openCell = (state, {id}) =>
   state.setIn(['cells', id, 'status'], 'open');
