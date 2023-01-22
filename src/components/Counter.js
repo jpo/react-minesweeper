@@ -1,6 +1,11 @@
-import React from 'react';
+import React from "react";
 
-const Counter = ({count}) =>
-  <div className="counter">Mines: {count}</div>;
+function Counter({ value }) {
+  return (
+    <div className="counter">
+      Mines: {value}
+    </div>
+  );
+}
 
 export default Counter;

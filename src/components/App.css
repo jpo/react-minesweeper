@@ -1,0 +1,12 @@
+#app {
+  margin-bottom: 20px;
+}
+
+#app > h1#title {
+  text-align: center;
+}
+
+#app > div#game {
+  display: table;
+  margin: 0 auto;
+}

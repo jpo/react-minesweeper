@@ -1,4 +1,3 @@
-/* Base Application Styles */
 body {
   padding-top: 40px;
 }
@@ -16,13 +15,4 @@ body {
 /* for IE 6 & 7 */
 .clearfix {
   zoom: 1;
-}
-
-#app-title,
-#app-badges {
-  text-align: center;
-}
-
-#app {
-  margin-bottom: 20px;
 }

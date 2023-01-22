@@ -1,22 +1,27 @@
 import React from 'react';
-import {connect} from 'react-redux';
-import {resetGame} from '../actions';
 
-let Face = ({dispatch, status}) => {
-  const icon = status === 'winner' ? 'fa fa-thumbs-o-up' :
-               status === 'loser'  ? 'fa fa-frown-o'     :
-                                     'fa fa-smile-o';
+function Face({ status, onClick }) {
+  const classNames = ['fa'];
 
-  const onClick = () => {
-    dispatch(resetGame());
-  };
+  switch (status) {
+    case 'playing':
+      classNames.push('fa-meh-o');
+      break;
+    case 'won':
+      classNames.push('fa-trophy')
+      break;
+    case 'lost':
+      classNames.push('fa-frown-o');
+      break;
+    default:
+      classNames.push('fa-smile-o');
+  }
 
   return (
     <div className="face" onClick={onClick}>
-      <i className={icon} />
+      <i className={classNames.join(' ')} />
     </div>
-  );
-};
+  )
+}
 
-Face = connect()(Face);
 export default Face;

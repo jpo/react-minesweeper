@@ -1,30 +1,39 @@
-import React from 'react';
-import {List} from 'immutable';
-import Cell from './Cell';
-import '../styles/Minefield.css';
+import React from "react";
+import Cell from "./Cell";
+import { useGame } from "./GameContext";
+import "./Minefield.css";
 
-const Minefield = ({rows, cols, cells}) => {
-  const renderField = (cells) =>
+ function Minefield() {
+  const {
+    cells,
+    revealCell,
+    flagCell,
+  } = useGame();
+
+  return (
     <div className="minefield">
       <table>
         <tbody>
-          {cells.map((r,i) => renderRow(r,i))}
+          {cells.map((row, rowIndex) => (
+            <tr key={`row-${rowIndex}`}>
+              {row.map((cell, colIndex) => (
+                <td key={`col-${colIndex}`}>
+                  <Cell
+                    key={`cell-${colIndex}`}
+                    onClick={() => revealCell(rowIndex, colIndex)}
+                    onRightClick={() => flagCell(rowIndex, colIndex)}
+                    revealed={cell.revealed}
+                    flagged={cell.flagged}
+                    value={cell.value}
+                  />
+                </td>
+              ))}
+            </tr>
+          ))}
         </tbody>
       </table>
-    </div>;
-
-  const renderRow = (row, index) =>
-    <tr key={`row-${index}`}>
-      {row.map((c,i) => renderCell(c,i))}
-    </tr>;
-
-  const renderCell = (cell, index) =>
-    <Cell key={`col-${index}`} cell={cell} />;
-
-  const toMatrix = (cells) =>
-    cells.reduce((r,c,i) => r.update(i/cols|0, List(), x => x.push(c)), List());
-
-  return renderField(toMatrix(cells));
-};
+    </div>
+  );
+}
 
 export default Minefield;

@@ -1,41 +1,43 @@
 import React from 'react';
-import {connect} from 'react-redux';
-import {openCell, openEmpty, openMine, flagCell} from '../actions';
 
-let Cell = ({dispatch, cell}) => {
-  const isOpen    = cell.get('status') === 'open';
-  const isFlag    = cell.get('status') === 'flag';
-  const isEmpty   = cell.get('value')  === 0;
-  const isMine    = cell.get('value')  === '*';
-
-  const className = `${cell.get('status')} ${(isOpen && isMine) ? "mine" : ""}`;
-
-  const value     = (isFlag)             ? <i className="fa fa-flag" /> :
-                    (isOpen && isMine)   ? <i className="fa fa-bomb" /> :
-                    (isOpen && !isEmpty) ? cell.get('value') : '';
-
-  const onClick = () => {
-    if (isOpen) return;
-
-    if (isMine) 
-      dispatch(openMine(cell.get('id')));
-    else if (isEmpty)
-      dispatch(openEmpty(cell.get('id')));
-    else
-      dispatch(openCell(cell.get('id')));
-  };
-
-  const onContextMenu = (e) => {
+function Cell({ revealed, flagged, value, onClick, onRightClick }) {
+  const handleClick = (e) => {
     e.preventDefault();
-    dispatch(flagCell(cell.get('id')));
-  };
+    onClick();
+  }
+
+  const handleRightClick = (e) => {
+    e.preventDefault();
+    onRightClick();
+  }
+
+  let className = '';
+  let output = '';
+
+  if(revealed) {
+    if (value === '*') {
+      className = 'mine';
+      output = <i className="fa fa-bomb"></i>;
+    } else {
+      className = 'revealed';
+      output = value;
+    }
+  } else if (flagged) {
+    className = 'flagged';
+    output = <i className="fa fa-flag"></i>;
+  } else {
+    className = 'closed';
+    output = '';
+  }
 
   return (
-    <td className={className} onClick={onClick} onContextMenu={onContextMenu}>
-      {value}
-    </td>
-  );
-};
+    <div className={`cell ${className}`}
+      onClick={handleClick}
+      onContextMenu={handleRightClick}
+    >
+      {output}
+    </div>
+  )
+}
 
-Cell = connect()(Cell);
 export default Cell;

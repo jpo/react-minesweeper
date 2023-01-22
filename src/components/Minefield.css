@@ -1,0 +1,37 @@
+.minefield table {
+  border-collapse: separate;
+  border-spacing: 2px;
+  margin: 0px auto 10px auto;
+  padding: 0;
+  width: 100%;
+}
+
+.minefield td {
+  height: 25px;
+  width: 25px;
+  margin: 0;
+  padding: 0;
+}
+
+.minefield td div.cell {
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  cursor: default;
+  line-height: 25px;
+  color: #fff;
+}
+
+.minefield td .cell.revealed {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.minefield td .cell.closed,
+.minefield td .cell.flagged {
+  background-color: #3a6ea5;
+}
+
+.minefield td .cell.mine {
+  background-color: #db3a34;
+}
