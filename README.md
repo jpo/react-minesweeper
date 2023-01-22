@@ -1,9 +1,11 @@
-# ReactJS Minesweeper
+# React Minesweeper
 
-ReactJS Minesweeper is a Minesweeper clone written in JavaScript (ES2015)
-using the ReactJS library.
+This project is a clone of the classic Minesweeper game built with React. It features a simple,
+minimalist interface and a well-tested game module that houses the game rules. The React
+code itself is straightforward and used mostly for presentation.
 
-Demo: [http://joshorourke.com/react-minesweeper](http://joshorourke.com/react-minesweeper)
+## DEMO
+[http://joshorourke.com/react-minesweeper](http://joshorourke.com/react-minesweeper)
 
 ## SCREENSHOT
 <img src="https://raw.github.com/jpo/react-minesweeper/master/public/screenshot.png" />
