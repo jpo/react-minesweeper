@@ -5,7 +5,7 @@ import "./Minefield.css";
 
  function Minefield() {
   const {
-    cells,
+    game,
     revealCell,
     flagCell,
   } = useGame();
@@ -14,7 +14,7 @@ import "./Minefield.css";
     <div className="minefield">
       <table>
         <tbody>
-          {cells.map((row, rowIndex) => (
+          {game.cells.map((row, rowIndex) => (
             <tr key={`row-${rowIndex}`}>
               {row.map((cell, colIndex) => (
                 <td key={`col-${colIndex}`}>

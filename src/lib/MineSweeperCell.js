@@ -21,7 +21,7 @@ class MineSweeperCell {
     this.col = col;
     this.revealed = false;
     this.flagged = false;
-    this.#value = value;
+    this._value = value;
   }
 
   /**
@@ -29,7 +29,7 @@ class MineSweeperCell {
    * @returns {boolean} - A boolean indicating whether the cell is a mine.
    */
   get isMine() {
-    return this.#value === '*';
+    return this._value === '*';
   }
 
   /**
@@ -37,7 +37,7 @@ class MineSweeperCell {
    * @returns {boolean} - A boolean indicating whether the cell is empty.
    */
   get isEmpty() {
-    return this.#value === 0;
+    return this._value === 0;
   }
 
   /**
@@ -72,7 +72,7 @@ class MineSweeperCell {
       } else if (this.isEmpty) {
         return '';
       } else {
-        return this.#value;
+        return this._value;
       }
     } else if (this.flagged) {
       return 'F';
@@ -86,7 +86,7 @@ class MineSweeperCell {
    * @param {string} value - The value of the cell.
    */
   set value(value) {
-    this.#value = value;
+    this._value = value;
   }
 
   /**

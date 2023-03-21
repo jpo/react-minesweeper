@@ -51,7 +51,7 @@ class MineSweeper {
     this.remainingFlags = this.mines;
     this.startTime = null;
     this.stopTime = null;
-    this.cells = this.#createCells(this.rows, this.cols, this.mines);
+    this.cells = this._createCells(this.rows, this.cols, this.mines);
   }
 
   /**
@@ -170,7 +170,7 @@ class MineSweeper {
     this.remainingCells--;
 
     if (cell.isEmpty) {
-      this.#revealAdjacentCells(row, col);
+      this._revealAdjacentCells(row, col);
     }
 
     if (this.remainingCells === 0) {
@@ -252,7 +252,7 @@ class MineSweeper {
    * @param {number} mines - The number of mines in the minefield.
    * @returns {MineSweeperCell[][]} - The minefield.
    */
-  #createCells(rows, cols, mines) {
+  _createCells(rows, cols, mines) {
     const minefield = [];
 
     // Create the minefield with default cells and no mines.
@@ -285,7 +285,7 @@ class MineSweeper {
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < cols; j++) {
         if (!minefield[i][j].isMine) {
-          const count = this.#countAdjacentMines(minefield, i, j);
+          const count = this._countAdjacentMines(minefield, i, j);
           minefield[i][j].value = count;
         }
       }
@@ -301,7 +301,7 @@ class MineSweeper {
    * @param {number} col - The column of the cell.
    * @returns {number} - The number of adjacent mines.
    */
-  #countAdjacentMines(minefield, row, col) {
+  _countAdjacentMines(minefield, row, col) {
     let count = 0;
 
     for (let i = row - 1; i <= row + 1; i++) {
@@ -323,7 +323,7 @@ class MineSweeper {
    * @param {number} col - The column of the cell.
    * @returns {MineSweeperCell[]} - The adjacent cells.
    */
-  #getAdjacentCells(row, col) {
+  _getAdjacentCells(row, col) {
     const adjacentCells = [];
     
     for (let r = row - 1; r <= row + 1; r++) {
@@ -344,15 +344,15 @@ class MineSweeper {
    * @param {number} col - The column of the cell.
    * @returns {void}
    */
-  #revealAdjacentCells(row, col) {
-    const adjacentCells = this.#getAdjacentCells(row, col);
+  _revealAdjacentCells(row, col) {
+    const adjacentCells = this._getAdjacentCells(row, col);
 
     for (const cell of adjacentCells) {
       if (cell.hidden) {
         cell.reveal();
         this.remainingCells--;
         if (cell.isEmpty) {
-          this.#revealAdjacentCells(cell.row, cell.col);
+          this._revealAdjacentCells(cell.row, cell.col);
         }
       }
     }

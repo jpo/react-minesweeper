@@ -6,12 +6,12 @@ import { useGame } from './GameContext';
 import './Toolbar.css';
 
 function Toolbar () {
-  const { game, resetGame, status } = useGame();
+  const { game, resetGame } = useGame();
 
   return (
     <div className="toolbar">
-      <Clock started={status === 'playing'} tick={() => game.elapsedTime} />
-      <Face status={status} onClick={resetGame} />
+      <Clock started={game.status === 'playing'} tick={() => game.elapsedTime} />
+      <Face status={game.status} onClick={resetGame} />
       <Counter value={game.remainingFlags} />
     </div>
   );
